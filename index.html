@@ -427,8 +427,56 @@
               </div>
             </div>
 
-            <!-- Urethane Only: Heat-Reflective Paint Topcoat Option Toolbar -->
-            <div id="urethaneHeatOptionToolbar" class="mb-4 rounded-xl border border-emerald-200 bg-emerald-50/70 p-4">
+            <!-- Urethane Only: System Type (2액형 표준 vs 탄성방수제 1액형 중도+상도) & Heat-Reflective Topcoat Option Toolbar -->
+            <div id="urethaneHeatOptionToolbar" class="mb-4 space-y-3">
+              <!-- NEW: Waterproofing System Selector Box (기본 우레탄 / 탄성방수제 1액형 / 시트방수제 + 시트프라이머) -->
+              <div class="rounded-xl border-2 border-cyan-300 bg-cyan-50/80 p-3.5 sm:p-4">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 rounded-md bg-cyan-800 text-white text-xs font-extrabold">방수 시스템 선택</span>
+                    <h3 class="text-xs sm:text-sm font-extrabold text-cyan-950">💧 탄성방수제 1액형 (중도+상도) · 📜 시트방수제 (+프라이머) 시공 전환</h3>
+                  </div>
+                  <span id="urethaneSystemStatusBadge" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-white text-emerald-800 border border-emerald-300">
+                    현재: 기본 우레탄 (하도+중도+상도)
+                  </span>
+                </div>
+                <p class="text-xs text-cyan-900 mb-3 leading-relaxed">
+                  일반 우레탄(하도+중도+상도), <strong>탄성방수제 1액형(중도+상도 겸용)</strong>, 또는 <strong>시트방수제 + 시트방수제 프라이머</strong> 공법으로 원터치 전환하거나 아래 개별 버튼 및 자재 카드에서 체크·단가·평수를 자유롭게 조절할 수 있습니다.
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-2">
+                  <button type="button" data-u-sys="standard" class="urethane-sys-btn py-2 px-3 rounded-lg text-xs font-extrabold bg-emerald-700 text-white shadow-sm transition">
+                    🟢 기본 우레탄 (하도+중도+상도)
+                  </button>
+                  <button type="button" data-u-sys="one_comp_primer" class="urethane-sys-btn py-2 px-3 rounded-lg text-xs font-semibold bg-white text-cyan-950 border border-cyan-300 hover:bg-cyan-100 transition">
+                    💧 탄성방수제 1액형 (하도 + 중도·상도일체)
+                  </button>
+                  <button type="button" data-u-sys="one_comp_only" class="urethane-sys-btn py-2 px-3 rounded-lg text-xs font-semibold bg-white text-cyan-950 border border-cyan-300 hover:bg-cyan-100 transition">
+                    ⚡ 탄성방수제 1액형 단독 (중도+상도만)
+                  </button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-cyan-200/80">
+                  <button type="button" data-u-sys="sheet_only" class="urethane-sys-btn py-2 px-3 rounded-lg text-xs font-semibold bg-white text-indigo-950 border border-indigo-300 hover:bg-indigo-100 transition">
+                    📜 시트방수 단독 시공 (시트방수제 프라이머 + 시트방수제)
+                  </button>
+                  <button type="button" data-u-sys="sheet_composite" class="urethane-sys-btn py-2 px-3 rounded-lg text-xs font-semibold bg-white text-indigo-950 border border-indigo-300 hover:bg-indigo-100 transition">
+                    🛡️ 복합 시트+우레탄 방수 (시트프라이머+시트방수제+중도+상도)
+                  </button>
+                </div>
+                <div class="mt-2.5 pt-2 border-t border-cyan-200/70 flex flex-wrap items-center justify-between gap-2">
+                  <span class="text-[11px] font-extrabold text-indigo-950">📜 시트방수 자재 개별 빠른 추가/해제:</span>
+                  <div class="flex flex-wrap gap-1.5">
+                    <button type="button" id="btnQuickToggleSheetPrimer" class="py-1 px-2.5 rounded-lg text-xs font-bold bg-white text-indigo-900 border border-indigo-300 hover:bg-indigo-50 transition">
+                      ➕ 시트방수제 프라이머 (하도)
+                    </button>
+                    <button type="button" id="btnQuickToggleSheetMain" class="py-1 px-2.5 rounded-lg text-xs font-bold bg-white text-indigo-900 border border-indigo-300 hover:bg-indigo-50 transition">
+                      ➕ 시트방수제 (본재/시트)
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Heat-Reflective Paint Topcoat Option Box -->
+              <div class="rounded-xl border border-emerald-200 bg-emerald-50/70 p-3.5 sm:p-4">
               <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
                 <div class="flex items-center gap-2">
                   <span class="px-2.5 py-0.5 rounded-md bg-emerald-700 text-white text-xs font-bold">우레탄 전용 옵션</span>
@@ -451,6 +499,7 @@
                 <button type="button" data-heat-mode="replace" class="urethane-heat-btn py-2 px-3 rounded-lg text-xs font-semibold bg-white text-emerald-900 border border-emerald-200 hover:bg-emerald-100 transition">
                   🔄 일반상도 대신 차열상도로 변경
                 </button>
+              </div>
               </div>
             </div>
 
@@ -2654,6 +2703,45 @@
                 note: '1말당 20평 기준 (단가 10만원)'
               },
               {
+                id: 'u_one_comp',
+                name: '탄성방수제 1액형 (중도+상도 겸용)',
+                role: '중도+상도',
+                specUnit: '18L(1말)',
+                unitPrice: 65000,
+                coveragePerMal: 5,
+                calcMode: 'coverage',
+                manualQty: 6,
+                included: false,
+                isOneCompOption: true,
+                note: '중도+상도 개념의 1액형 탄성방수제 (1말당 약 5평 기준 · 단가/평수 자유 수정 가능)'
+              },
+              {
+                id: 'u_sheet_primer',
+                name: '시트방수제 프라이머 (전용 하도)',
+                role: '시트하도',
+                specUnit: '18L(1말)',
+                unitPrice: 55000,
+                coveragePerMal: 15,
+                calcMode: 'coverage',
+                manualQty: 2,
+                included: false,
+                isSheetOption: true,
+                note: '시트방수 전용 프라이머 하도 (1말당 15평 기준 · 단가/평수 자유 수정 가능)'
+              },
+              {
+                id: 'u_sheet_main',
+                name: '시트방수제 (방수시트/함침제)',
+                role: '시트방수',
+                specUnit: '18L(1말)',
+                unitPrice: 75000,
+                coveragePerMal: 5,
+                calcMode: 'coverage',
+                manualQty: 6,
+                included: false,
+                isSheetOption: true,
+                note: '시트방수제 본재/시트 (1말/롤당 5평 기준 · 단가/평수/수량 자유 수정 가능)'
+              },
+              {
                 id: 'u_heat_top',
                 name: '우레탄 차열페인트 상도 (옵션)',
                 role: '차열상도',
@@ -3114,6 +3202,34 @@
               merged.tabs.urethane.materials.push(heatItem);
             }
           }
+          const hasOneComp = merged.tabs.urethane.materials.some(m => m.id === 'u_one_comp');
+          if (!hasOneComp) {
+            const topIdx2 = merged.tabs.urethane.materials.findIndex(m => m.id === 'u_top');
+            const oneCompItem = factory.tabs.urethane.materials.find(m => m.id === 'u_one_comp');
+            if (topIdx2 !== -1 && oneCompItem) {
+              merged.tabs.urethane.materials.splice(topIdx2 + 1, 0, deepClone(oneCompItem));
+            } else if (oneCompItem) {
+              merged.tabs.urethane.materials.push(deepClone(oneCompItem));
+            }
+          } else {
+            const oc = merged.tabs.urethane.materials.find(m => m.id === 'u_one_comp');
+            if (oc) oc.isOneCompOption = true;
+          }
+          ['u_sheet_primer', 'u_sheet_main'].forEach(sheetId => {
+            const exists = merged.tabs.urethane.materials.some(m => m.id === sheetId);
+            if (!exists) {
+              const facItem = factory.tabs.urethane.materials.find(m => m.id === sheetId);
+              const insertAfterIdx = merged.tabs.urethane.materials.findIndex(m => m.id === (sheetId === 'u_sheet_main' ? 'u_sheet_primer' : 'u_one_comp'));
+              if (insertAfterIdx !== -1 && facItem) {
+                merged.tabs.urethane.materials.splice(insertAfterIdx + 1, 0, deepClone(facItem));
+              } else if (facItem) {
+                merged.tabs.urethane.materials.push(deepClone(facItem));
+              }
+            } else {
+              const sItem = merged.tabs.urethane.materials.find(m => m.id === sheetId);
+              if (sItem) sItem.isSheetOption = true;
+            }
+          });
         }
         // Migrate prep materials (바탕조정제, 몰탈, 시멘트, 수평몰탈) & helper labor defaults across all standard tabs
         ['urethane', 'epoxy', 'elastic'].forEach(k => {
@@ -3294,6 +3410,7 @@
     function getMatUnitWord(mat) {
       const spec = String((mat && mat.specUnit) || '');
       if (spec.includes('포')) return '포';
+      if (spec.includes('롤') && !spec.includes('말')) return '롤';
       return '말';
     }
 
@@ -3333,7 +3450,95 @@
       }
     }
 
+    function getUrethaneSystemMode() {
+      const uTab = appState.tabs.urethane;
+      const primerMat = uTab.materials.find(m => m.id === 'u_primer');
+      const midMat = uTab.materials.find(m => m.id === 'u_middle');
+      const topMat = uTab.materials.find(m => m.id === 'u_top');
+      const oneCompMat = uTab.materials.find(m => m.id === 'u_one_comp');
+      const sheetPrimerMat = uTab.materials.find(m => m.id === 'u_sheet_primer');
+      const sheetMainMat = uTab.materials.find(m => m.id === 'u_sheet_main');
+      const primerInc = primerMat ? primerMat.included !== false : true;
+      const midInc = midMat ? midMat.included !== false : true;
+      const topInc = topMat ? topMat.included !== false : true;
+      const oneCompInc = oneCompMat ? oneCompMat.included !== false : false;
+      const sheetPrimerInc = sheetPrimerMat ? sheetPrimerMat.included !== false : false;
+      const sheetMainInc = sheetMainMat ? sheetMainMat.included !== false : false;
+
+      if ((sheetPrimerInc || sheetMainInc) && !midInc && !topInc && !oneCompInc) {
+        return 'sheet_only';
+      }
+      if ((sheetPrimerInc || sheetMainInc) && (midInc || topInc || oneCompInc)) {
+        return 'sheet_composite';
+      }
+      if (oneCompInc && !midInc && !topInc) {
+        return primerInc ? 'one_comp_primer' : 'one_comp_only';
+      }
+      if (oneCompInc) {
+        return 'one_comp_custom';
+      }
+      return 'standard';
+    }
+
     function syncUrethaneHeatToolbar() {
+      const sysMode = getUrethaneSystemMode();
+      const sysBadge = document.getElementById('urethaneSystemStatusBadge');
+      if (sysBadge) {
+        if (sysMode === 'standard') {
+          sysBadge.textContent = '현재: 기본 우레탄 (하도+중도+상도)';
+          sysBadge.className = 'text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-white text-emerald-800 border border-emerald-300';
+        } else if (sysMode === 'one_comp_primer') {
+          sysBadge.textContent = '💧 적용중: 하도 + 탄성방수제 1액형(중도+상도)';
+          sysBadge.className = 'text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-cyan-100 text-cyan-950 border border-cyan-400';
+        } else if (sysMode === 'one_comp_only') {
+          sysBadge.textContent = '⚡ 적용중: 탄성방수제 1액형(중도+상도) 단독 시공';
+          sysBadge.className = 'text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-cyan-100 text-cyan-950 border border-cyan-400';
+        } else if (sysMode === 'sheet_only') {
+          sysBadge.textContent = '📜 적용중: 시트방수 시공 (시트방수제 프라이머 + 시트방수제)';
+          sysBadge.className = 'text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-950 border border-indigo-400';
+        } else if (sysMode === 'sheet_composite') {
+          sysBadge.textContent = '🛡️ 적용중: 복합 시트+우레탄 방수 시공';
+          sysBadge.className = 'text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-950 border border-indigo-400';
+        } else {
+          sysBadge.textContent = '💧 적용중: 탄성방수제 1액형(중도+상도) 포함 복합시공';
+          sysBadge.className = 'text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-cyan-100 text-cyan-950 border border-cyan-400';
+        }
+      }
+      document.querySelectorAll('.urethane-sys-btn').forEach(btn => {
+        const bMode = btn.dataset.uSys;
+        const isActive = (bMode === sysMode) || (sysMode === 'one_comp_custom' && bMode === 'one_comp_primer');
+        const isSheetBtn = (bMode === 'sheet_only' || bMode === 'sheet_composite');
+        if (isActive) {
+          btn.className = isSheetBtn
+            ? 'urethane-sys-btn py-2 px-3 rounded-lg text-xs font-extrabold bg-indigo-700 text-white shadow-sm transition'
+            : 'urethane-sys-btn py-2 px-3 rounded-lg text-xs font-extrabold bg-cyan-800 text-white shadow-sm transition';
+        } else {
+          btn.className = isSheetBtn
+            ? 'urethane-sys-btn py-2 px-3 rounded-lg text-xs font-semibold bg-white text-indigo-950 border border-indigo-300 hover:bg-indigo-100 transition'
+            : 'urethane-sys-btn py-2 px-3 rounded-lg text-xs font-semibold bg-white text-cyan-950 border border-cyan-300 hover:bg-cyan-100 transition';
+        }
+      });
+
+      const uTab = appState.tabs.urethane;
+      const spMat = uTab.materials.find(m => m.id === 'u_sheet_primer');
+      const smMat = uTab.materials.find(m => m.id === 'u_sheet_main');
+      const btnSP = document.getElementById('btnQuickToggleSheetPrimer');
+      const btnSM = document.getElementById('btnQuickToggleSheetMain');
+      if (btnSP && spMat) {
+        const inc = spMat.included !== false;
+        btnSP.textContent = inc ? '✅ 시트방수제 프라이머 포함됨' : '➕ 시트방수제 프라이머 (하도)';
+        btnSP.className = inc
+          ? 'py-1 px-2.5 rounded-lg text-xs font-extrabold bg-indigo-700 text-white border border-indigo-800 shadow-sm transition'
+          : 'py-1 px-2.5 rounded-lg text-xs font-bold bg-white text-indigo-900 border border-indigo-300 hover:bg-indigo-50 transition';
+      }
+      if (btnSM && smMat) {
+        const inc = smMat.included !== false;
+        btnSM.textContent = inc ? '✅ 시트방수제 포함됨' : '➕ 시트방수제 (본재/시트)';
+        btnSM.className = inc
+          ? 'py-1 px-2.5 rounded-lg text-xs font-extrabold bg-indigo-700 text-white border border-indigo-800 shadow-sm transition'
+          : 'py-1 px-2.5 rounded-lg text-xs font-bold bg-white text-indigo-900 border border-indigo-300 hover:bg-indigo-50 transition';
+      }
+
       const mode = getUrethaneHeatMode();
       const badge = document.getElementById('urethaneHeatStatusBadge');
       if (badge) {
@@ -3858,6 +4063,9 @@
         '하도': 'bg-amber-100 text-amber-800 border-amber-200',
         '중도': 'bg-emerald-100 text-emerald-800 border-emerald-200',
         '상도': 'bg-sky-100 text-sky-800 border-sky-200',
+        '중도+상도': 'bg-cyan-100 text-cyan-900 border-cyan-300',
+        '시트하도': 'bg-indigo-100 text-indigo-900 border-indigo-300',
+        '시트방수': 'bg-violet-100 text-violet-900 border-violet-300',
         '차열상도': 'bg-rose-100 text-rose-800 border-rose-200',
         '신나': 'bg-purple-100 text-purple-800 border-purple-200',
         '탄성 1': 'bg-purple-100 text-purple-800 border-purple-200',
@@ -3908,6 +4116,30 @@
               <strong id="matSubtotal-${idx}" class="text-sm sm:text-base font-extrabold ${isIncluded ? 'text-slate-900' : 'text-slate-400 line-through'}">${formatWon(subtotal)}원</strong>
             </div>
           </div>
+
+          ${(mat.isOneCompOption || mat.id === 'u_one_comp') ? `
+            <div class="mb-3 px-3 py-2 rounded-lg bg-cyan-50/90 border border-cyan-200 flex flex-wrap items-center justify-between gap-2">
+              <span class="text-[11px] font-bold text-cyan-950">💧 탄성방수제 1액형(중도+상도) 도포평수 빠른 변경:</span>
+              <div class="flex flex-wrap gap-1.5">
+                <button type="button" data-mat-idx="${idx}" data-onecomp-cov="3" class="onecomp-cov-btn text-[11px] font-bold px-2 py-0.5 rounded bg-white border border-cyan-300 text-cyan-900 hover:bg-cyan-100">후막 (3평/말)</button>
+                <button type="button" data-mat-idx="${idx}" data-onecomp-cov="5" class="onecomp-cov-btn text-[11px] font-bold px-2 py-0.5 rounded bg-cyan-700 text-white hover:bg-cyan-600 shadow-sm">표준 2~3회 (5평/말)</button>
+                <button type="button" data-mat-idx="${idx}" data-onecomp-cov="6" class="onecomp-cov-btn text-[11px] font-bold px-2 py-0.5 rounded bg-white border border-cyan-300 text-cyan-900 hover:bg-cyan-100">일반 (6평/말)</button>
+                <button type="button" data-mat-idx="${idx}" data-onecomp-cov="10" class="onecomp-cov-btn text-[11px] font-bold px-2 py-0.5 rounded bg-white border border-cyan-300 text-cyan-900 hover:bg-cyan-100">1회 코팅 (10평/말)</button>
+              </div>
+            </div>
+          ` : ''}
+
+          ${(mat.id === 'u_sheet_main') ? `
+            <div class="mb-3 px-3 py-2 rounded-lg bg-indigo-50/90 border border-indigo-200 flex flex-wrap items-center justify-between gap-2">
+              <span class="text-[11px] font-bold text-indigo-950">📜 시트방수제 규격·도포평수 빠른 변경:</span>
+              <div class="flex flex-wrap gap-1.5">
+                <button type="button" data-mat-idx="${idx}" data-sheet-cov="3" data-sheet-unit="18L(1말)" class="sheet-preset-btn text-[11px] font-bold px-2 py-0.5 rounded bg-white border border-indigo-300 text-indigo-900 hover:bg-indigo-100">함침 후막 (3평/말)</button>
+                <button type="button" data-mat-idx="${idx}" data-sheet-cov="5" data-sheet-unit="18L(1말)" class="sheet-preset-btn text-[11px] font-bold px-2 py-0.5 rounded bg-indigo-700 text-white hover:bg-indigo-600 shadow-sm">표준 (5평/말)</button>
+                <button type="button" data-mat-idx="${idx}" data-sheet-cov="6" data-sheet-unit="1롤(시트)" class="sheet-preset-btn text-[11px] font-bold px-2 py-0.5 rounded bg-white border border-indigo-300 text-indigo-900 hover:bg-indigo-100">방수시트 1롤 (6평/롤)</button>
+                <button type="button" data-mat-idx="${idx}" data-sheet-cov="10" data-sheet-unit="18L(1말)" class="sheet-preset-btn text-[11px] font-bold px-2 py-0.5 rounded bg-white border border-indigo-300 text-indigo-900 hover:bg-indigo-100">일반 (10평/말)</button>
+              </div>
+            </div>
+          ` : ''}
 
           ${isThinnerItem ? `
             <div class="mb-3 px-3 py-2 rounded-lg bg-purple-50/80 border border-purple-200/80 flex flex-wrap items-center justify-between gap-2">
@@ -4037,6 +4269,38 @@
           syncElasticToolbarButtons();
           renderMaterialInputs();
           updateCalculationsOnly();
+        });
+      });
+
+      container.querySelectorAll('.onecomp-cov-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const idx = Number(e.currentTarget.dataset.matIdx);
+          const cov = Number(e.currentTarget.dataset.onecompCov);
+          const mat = getCurrentTabState().materials[idx];
+          mat.calcMode = 'coverage';
+          mat.coveragePerMal = cov;
+          mat.included = true;
+          syncUrethaneHeatToolbar();
+          renderMaterialInputs();
+          updateCalculationsOnly();
+          showToast(`${mat.name} 도포량이 1말당 ${cov}평 기준으로 설정되었습니다.`);
+        });
+      });
+
+      container.querySelectorAll('.sheet-preset-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const idx = Number(e.currentTarget.dataset.matIdx);
+          const cov = Number(e.currentTarget.dataset.sheetCov);
+          const unit = e.currentTarget.dataset.sheetUnit;
+          const mat = getCurrentTabState().materials[idx];
+          mat.calcMode = 'coverage';
+          mat.coveragePerMal = cov;
+          if (unit) mat.specUnit = unit;
+          mat.included = true;
+          syncUrethaneHeatToolbar();
+          renderMaterialInputs();
+          updateCalculationsOnly();
+          showToast(`${mat.name} 기준이 ${mat.specUnit} (${cov}평)으로 설정되었습니다.`);
         });
       });
 
@@ -4287,9 +4551,22 @@
         .filter(m => m.included !== false)
         .map(m => m.name);
       const hasHeatOption = appState.activeTab === 'urethane' && tab.materials.some(m => m.id === 'u_heat_top' && m.included !== false);
+      const hasOneCompOption = appState.activeTab === 'urethane' && tab.materials.some(m => m.id === 'u_one_comp' && m.included !== false);
+      const hasSheetOption = appState.activeTab === 'urethane' && tab.materials.some(m => (m.id === 'u_sheet_main' || m.id === 'u_sheet_primer') && m.included !== false);
+      const hasStdMidOption = appState.activeTab === 'urethane' && tab.materials.some(m => m.id === 'u_middle' && m.included !== false);
+      let baseUrethaneTitle = tab.title;
+      if (hasSheetOption && !hasStdMidOption && !hasOneCompOption) {
+        baseUrethaneTitle = '시트방수';
+      } else if (hasSheetOption && (hasStdMidOption || hasOneCompOption)) {
+        baseUrethaneTitle = '복합 시트·우레탄 방수';
+      } else if (hasOneCompOption && !hasStdMidOption) {
+        baseUrethaneTitle = '우레탄 탄성방수제(1액형 중도+상도)';
+      } else if (hasOneCompOption && hasStdMidOption) {
+        baseUrethaneTitle = '우레탄 및 탄성방수제(1액형)';
+      }
       const quoteTitle = hasHeatOption
-        ? `${tab.title} 및 차열페인트 상도 시공 견적서`
-        : `${tab.title} 시공 견적서`;
+        ? `${baseUrethaneTitle} 및 차열페인트 상도 시공 견적서`
+        : `${baseUrethaneTitle} 시공 견적서`;
 
       const scopeRows = [
         {
@@ -5996,6 +6273,100 @@
         }
         showToast('현재 탭의 설정이 저장된 초기 기본값으로 복원되었습니다.');
       });
+
+      // Urethane System Mode Buttons (기본 우레탄 / 탄성방수제 1액형 / 시트방수제 + 프라이머)
+      document.querySelectorAll('.urethane-sys-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const sysMode = e.currentTarget.dataset.uSys;
+          const uTab = appState.tabs.urethane;
+          const primerMat = uTab.materials.find(m => m.id === 'u_primer');
+          const midMat = uTab.materials.find(m => m.id === 'u_middle');
+          const topMat = uTab.materials.find(m => m.id === 'u_top');
+          const oneCompMat = uTab.materials.find(m => m.id === 'u_one_comp');
+          const sheetPrimerMat = uTab.materials.find(m => m.id === 'u_sheet_primer');
+          const sheetMainMat = uTab.materials.find(m => m.id === 'u_sheet_main');
+          const thinnerMat = uTab.materials.find(m => m.id === 'u_thinner');
+
+          if (sysMode === 'standard') {
+            if (primerMat) primerMat.included = true;
+            if (midMat) midMat.included = true;
+            if (topMat) topMat.included = true;
+            if (oneCompMat) oneCompMat.included = false;
+            if (sheetPrimerMat) sheetPrimerMat.included = false;
+            if (sheetMainMat) sheetMainMat.included = false;
+            if (thinnerMat) thinnerMat.included = true;
+            showToast('🟢 기본 우레탄 방수 (하도 + 중도 + 상도 + 신나) 구성으로 전환되었습니다.');
+          } else if (sysMode === 'one_comp_primer') {
+            if (primerMat) primerMat.included = true;
+            if (midMat) midMat.included = false;
+            if (topMat) topMat.included = false;
+            if (oneCompMat) oneCompMat.included = true;
+            if (sheetPrimerMat) sheetPrimerMat.included = false;
+            if (sheetMainMat) sheetMainMat.included = false;
+            if (thinnerMat) thinnerMat.included = false;
+            showToast('💧 탄성방수제 1액형 시공 (우레탄 하도 + 탄성방수제 1액형[중도+상도]) 구성으로 전환되었습니다.');
+          } else if (sysMode === 'one_comp_only') {
+            if (primerMat) primerMat.included = false;
+            if (midMat) midMat.included = false;
+            if (topMat) topMat.included = false;
+            if (oneCompMat) oneCompMat.included = true;
+            if (sheetPrimerMat) sheetPrimerMat.included = false;
+            if (sheetMainMat) sheetMainMat.included = false;
+            if (thinnerMat) thinnerMat.included = false;
+            showToast('⚡ 탄성방수제 1액형 단독 시공 (중도+상도 일체형만) 구성으로 전환되었습니다.');
+          } else if (sysMode === 'sheet_only') {
+            if (primerMat) primerMat.included = false;
+            if (midMat) midMat.included = false;
+            if (topMat) topMat.included = false;
+            if (oneCompMat) oneCompMat.included = false;
+            if (sheetPrimerMat) sheetPrimerMat.included = true;
+            if (sheetMainMat) sheetMainMat.included = true;
+            if (thinnerMat) thinnerMat.included = false;
+            showToast('📜 시트방수 단독 시공 (시트방수제 프라이머 + 시트방수제) 구성으로 전환되었습니다.');
+          } else if (sysMode === 'sheet_composite') {
+            if (primerMat) primerMat.included = false;
+            if (midMat) midMat.included = true;
+            if (topMat) topMat.included = true;
+            if (oneCompMat) oneCompMat.included = false;
+            if (sheetPrimerMat) sheetPrimerMat.included = true;
+            if (sheetMainMat) sheetMainMat.included = true;
+            if (thinnerMat) thinnerMat.included = true;
+            showToast('🛡️ 복합 시트+우레탄 방수 (시트프라이머 + 시트방수제 + 우레탄 중·상도) 구성으로 전환되었습니다.');
+          }
+
+          syncUrethaneHeatToolbar();
+          renderMaterialInputs();
+          updateCalculationsOnly();
+        });
+      });
+
+      const btnQuickSP = document.getElementById('btnQuickToggleSheetPrimer');
+      if (btnQuickSP) {
+        btnQuickSP.addEventListener('click', () => {
+          const mat = appState.tabs.urethane.materials.find(m => m.id === 'u_sheet_primer');
+          if (mat) {
+            mat.included = !(mat.included !== false);
+            syncUrethaneHeatToolbar();
+            renderMaterialInputs();
+            updateCalculationsOnly();
+            showToast(mat.included ? '✅ 시트방수제 프라이머가 견적에 추가되었습니다.' : '시트방수제 프라이머가 견적에서 제외되었습니다.');
+          }
+        });
+      }
+
+      const btnQuickSM = document.getElementById('btnQuickToggleSheetMain');
+      if (btnQuickSM) {
+        btnQuickSM.addEventListener('click', () => {
+          const mat = appState.tabs.urethane.materials.find(m => m.id === 'u_sheet_main');
+          if (mat) {
+            mat.included = !(mat.included !== false);
+            syncUrethaneHeatToolbar();
+            renderMaterialInputs();
+            updateCalculationsOnly();
+            showToast(mat.included ? '✅ 시트방수제가 견적에 추가되었습니다.' : '시트방수제가 견적에서 제외되었습니다.');
+          }
+        });
+      }
 
       // Urethane Heat-Reflective Topcoat Option Buttons
       document.querySelectorAll('.urethane-heat-btn').forEach(btn => {
