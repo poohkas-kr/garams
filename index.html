@@ -2812,7 +2812,7 @@
                 specUnit: '40kg(1포)',
                 unitPrice: 8000,
                 coveragePerMal: 3,
-                calcMode: 'manual',
+                calcMode: 'coverage',
                 manualQty: 5,
                 included: false,
                 isPrepMaterial: true,
@@ -2825,7 +2825,7 @@
                 specUnit: '40kg(1포)',
                 unitPrice: 9000,
                 coveragePerMal: 5,
-                calcMode: 'manual',
+                calcMode: 'coverage',
                 manualQty: 3,
                 included: false,
                 isPrepMaterial: true,
@@ -2938,7 +2938,7 @@
                 specUnit: '40kg(1포)',
                 unitPrice: 8000,
                 coveragePerMal: 3,
-                calcMode: 'manual',
+                calcMode: 'coverage',
                 manualQty: 5,
                 included: false,
                 isPrepMaterial: true,
@@ -2951,7 +2951,7 @@
                 specUnit: '40kg(1포)',
                 unitPrice: 9000,
                 coveragePerMal: 5,
-                calcMode: 'manual',
+                calcMode: 'coverage',
                 manualQty: 3,
                 included: false,
                 isPrepMaterial: true,
@@ -3052,7 +3052,7 @@
                 specUnit: '40kg(1포)',
                 unitPrice: 8000,
                 coveragePerMal: 3,
-                calcMode: 'manual',
+                calcMode: 'coverage',
                 manualQty: 5,
                 included: false,
                 isPrepMaterial: true,
@@ -3065,7 +3065,7 @@
                 specUnit: '40kg(1포)',
                 unitPrice: 9000,
                 coveragePerMal: 5,
-                calcMode: 'manual',
+                calcMode: 'coverage',
                 manualQty: 3,
                 included: false,
                 isPrepMaterial: true,
@@ -3291,8 +3291,19 @@
             if (typeof merged.tabs[k].helperRate === 'undefined') merged.tabs[k].helperRate = 180000;
             if (typeof merged.tabs[k].helperDays === 'undefined') merged.tabs[k].helperDays = 1;
             if (typeof merged.tabs[k].helperWorkers === 'undefined') merged.tabs[k].helperWorkers = 1;
+            // Self-heal any materials stuck in calcMode: 'manual' from earlier saves so changing pyeong always recalculates mal
+            merged.tabs[k].materials.forEach(m => {
+              m.calcMode = 'coverage';
+              if (!Number(m.coveragePerMal) || Number(m.coveragePerMal) <= 0) {
+                const facMat = factory.tabs[k].materials.find(fm => fm.id === m.id);
+                m.coveragePerMal = facMat ? facMat.coveragePerMal : 10;
+              }
+            });
           }
         });
+        try {
+          localStorage.setItem(STORAGE_KEY_DEFAULTS, JSON.stringify(merged));
+        } catch (e) {}
         return { state: merged, isCustom: true };
       } catch (e) {
         return { state: factory, isCustom: false };
@@ -3338,15 +3349,36 @@
       else badge.classList.add('hidden');
     }
 
+    function resetTabMaterialsToAutoCoverage(tab) {
+      if (!tab || !Array.isArray(tab.materials)) return;
+      tab.materials.forEach(m => {
+        m.calcMode = 'coverage';
+      });
+    }
+
     function saveCurrentStateAsDefaults(customMsg) {
       try {
+        ['urethane', 'epoxy', 'elastic'].forEach(k => {
+          if (appState.tabs && appState.tabs[k]) {
+            resetTabMaterialsToAutoCoverage(appState.tabs[k]);
+          }
+        });
         const toSave = deepClone(appState);
         if (toSave.activeTab === 'admin') {
           toSave.activeTab = 'urethane';
         }
+        ['urethane', 'epoxy', 'elastic'].forEach(k => {
+          if (toSave.tabs && toSave.tabs[k]) {
+            resetTabMaterialsToAutoCoverage(toSave.tabs[k]);
+          }
+        });
         localStorage.setItem(STORAGE_KEY_DEFAULTS, JSON.stringify(toSave));
         updateCustomIndicator(true);
-        showToast(customMsg || '현재 설정값이 홈페이지 기본 초기값으로 영구 저장되었습니다!');
+        if (['urethane', 'epoxy', 'elastic'].includes(appState.activeTab)) {
+          renderMaterialInputs();
+          updateCalculationsOnly();
+        }
+        showToast(customMsg || '현재 설정값이 초기값으로 저장되었습니다! (평수 변경 시 말수 자동 연동)');
       } catch (e) {
         showToast('초기값 저장 중 오류가 발생했습니다.');
       }
@@ -4478,14 +4510,15 @@
 
               <!-- Coverage per Mal -->
               <div class="col-span-3 sm:col-span-4">
-                <div class="flex items-center justify-between mb-1">
+                <div class="flex items-center justify-between gap-1 mb-1">
                   <label for="matCov-${idx}" class="text-[11px] sm:text-xs font-semibold text-slate-600 truncate">1${unitWord}평수</label>
                   <button
                     type="button"
                     data-mat-idx="${idx}"
-                    class="toggle-calc-mode hidden sm:inline text-[10px] sm:text-[11px] font-semibold text-emerald-700 hover:underline"
+                    class="toggle-calc-mode inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-extrabold transition ${mat.calcMode === 'manual' ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}"
+                    title="클릭하여 평수 비례 자동계산 / 수동 고정 전환"
                   >
-                    ${mat.calcMode === 'manual' ? '자동계산' : '직접입력'}
+                    ${mat.calcMode === 'manual' ? '🔄자동전환' : '⚡평수연동'}
                   </button>
                 </div>
                 <div class="relative flex items-center">
@@ -4498,8 +4531,7 @@
                     data-mat-idx="${idx}"
                     data-field="coveragePerMal"
                     value="${mat.coveragePerMal}"
-                    ${mat.calcMode === 'manual' ? 'disabled' : ''}
-                    class="mat-input w-full rounded-lg border border-slate-300 ${mat.calcMode === 'manual' ? 'bg-slate-100 text-slate-400' : 'bg-white text-slate-900'} px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-bold pr-6 sm:pr-12"
+                    class="mat-input w-full rounded-lg border border-slate-300 bg-white text-slate-900 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-bold pr-6 sm:pr-12"
                   />
                   <span class="absolute right-1.5 sm:right-2 text-[10px] sm:text-[11px] font-semibold text-slate-400 pointer-events-none">평</span>
                 </div>
@@ -4737,7 +4769,16 @@
           const idx = Number(e.target.dataset.matIdx);
           const field = e.target.dataset.field;
           const val = Math.max(0, Number(e.target.value) || 0);
-          getCurrentTabState().materials[idx][field] = val;
+          const mat = getCurrentTabState().materials[idx];
+          mat[field] = val;
+          if (field === 'coveragePerMal' && val > 0) {
+            mat.calcMode = 'coverage';
+            const modeBtn = container.querySelector(`.toggle-calc-mode[data-mat-idx="${idx}"]`);
+            if (modeBtn) {
+              modeBtn.textContent = '⚡평수연동';
+              modeBtn.className = 'toggle-calc-mode inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-extrabold transition bg-emerald-50 text-emerald-700 border border-emerald-200';
+            }
+          }
           updateCalculationsOnly();
         });
       });
@@ -5746,6 +5787,9 @@
           const field = e.target.dataset.admField;
           const val = (field === 'name' || field === 'specUnit') ? e.target.value : (Number(e.target.value) || 0);
           appState.tabs[tKey].materials[mIdx][field] = val;
+          if (field === 'coveragePerMal') {
+            appState.tabs[tKey].materials[mIdx].calcMode = 'coverage';
+          }
         });
       });
 
@@ -6168,7 +6212,9 @@
 
       // Area (평) input
       document.getElementById('inputAreaPyeong').addEventListener('input', (e) => {
-        getCurrentTabState().areaPyeong = Math.max(0, Number(e.target.value) || 0);
+        const tab = getCurrentTabState();
+        tab.areaPyeong = Math.max(0, Number(e.target.value) || 0);
+        resetTabMaterialsToAutoCoverage(tab);
         renderMaterialInputs();
         updateCalculationsOnly();
       });
@@ -6177,7 +6223,9 @@
       document.getElementById('inputAreaSqmDirect').addEventListener('input', (e) => {
         const sqmVal = Math.max(0, Number(e.target.value) || 0);
         const pyVal = Math.round((sqmVal / 3.305785) * 10) / 10;
-        getCurrentTabState().areaPyeong = pyVal;
+        const tab = getCurrentTabState();
+        tab.areaPyeong = pyVal;
+        resetTabMaterialsToAutoCoverage(tab);
         document.getElementById('inputAreaPyeong').value = pyVal;
         renderMaterialInputs();
         updateCalculationsOnly();
@@ -6193,7 +6241,9 @@
         }
         const sqm = w * l;
         const py = Math.round((sqm / 3.305785) * 10) / 10;
-        getCurrentTabState().areaPyeong = py;
+        const tab = getCurrentTabState();
+        tab.areaPyeong = py;
+        resetTabMaterialsToAutoCoverage(tab);
         document.getElementById('inputAreaPyeong').value = py;
         renderMaterialInputs();
         updateCalculationsOnly();
@@ -6202,7 +6252,9 @@
 
       // Loss Percent input
       document.getElementById('inputLossPercent').addEventListener('input', (e) => {
-        getCurrentTabState().lossPercent = Math.max(0, Number(e.target.value) || 0);
+        const tab = getCurrentTabState();
+        tab.lossPercent = Math.max(0, Number(e.target.value) || 0);
+        resetTabMaterialsToAutoCoverage(tab);
         renderMaterialInputs();
         updateCalculationsOnly();
       });
@@ -6210,7 +6262,9 @@
       document.querySelectorAll('.quick-loss-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
           const loss = Number(e.currentTarget.dataset.loss);
-          getCurrentTabState().lossPercent = loss;
+          const tab = getCurrentTabState();
+          tab.lossPercent = loss;
+          resetTabMaterialsToAutoCoverage(tab);
           document.getElementById('inputLossPercent').value = loss;
           renderMaterialInputs();
           updateCalculationsOnly();
@@ -6221,7 +6275,9 @@
       document.querySelectorAll('.quick-pyeong-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
           const py = Number(e.currentTarget.dataset.pyeong);
-          getCurrentTabState().areaPyeong = py;
+          const tab = getCurrentTabState();
+          tab.areaPyeong = py;
+          resetTabMaterialsToAutoCoverage(tab);
           document.getElementById('inputAreaPyeong').value = py;
           renderMaterialInputs();
           updateCalculationsOnly();
