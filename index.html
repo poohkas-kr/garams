@@ -410,25 +410,49 @@
             </div>
           </section>
 
-          <!-- 2. Material Costs & Coverage Card -->
-          <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6">
-            <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-              <div class="flex items-center gap-2.5">
-                <span id="stepBadge2" class="w-6 h-6 rounded-full bg-emerald-600 text-white text-xs font-bold flex items-center justify-center">2</span>
+          <!-- 2. Material Costs & Coverage Card (Grouped by Category & Mobile-Optimized) -->
+          <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 sm:p-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <div class="flex items-center gap-2">
+                <span id="stepBadge2" class="w-6 h-6 rounded-full bg-emerald-600 text-white text-xs font-bold flex items-center justify-center shrink-0">2</span>
                 <div>
-                  <h2 id="materialSectionTitle" class="text-base sm:text-lg font-bold text-slate-900">우레탄 자재 단가 및 1말당 시공평수</h2>
+                  <h2 id="materialSectionTitle" class="text-sm sm:text-lg font-extrabold text-slate-900">우레탄 · 시트방수 · 몰탈 자재 그룹별 설정</h2>
+                  <p class="text-[11px] text-slate-500">공정별 묶음 정리 · 체크된 자재만 상세 입력창이 펼쳐집니다</p>
                 </div>
               </div>
-              <div class="flex items-center gap-2">
-                <span class="text-xs text-slate-500">규격(15L/40L 등)·단가·평수 즉시 수정 가능</span>
-                <button id="btnQuickSaveMaterials" type="button" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-100 text-amber-900 hover:bg-amber-200 border border-amber-300 transition">
+              <div class="flex items-center gap-1.5">
+                <button id="btnToggleTopPresetBoxes" type="button" class="text-[11px] font-bold px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 transition">
+                  ⚙️ 공법 일괄전환 옵션 ▾
+                </button>
+                <button id="btnQuickSaveMaterials" type="button" class="text-[11px] sm:text-xs font-bold px-2.5 py-1.5 rounded-lg bg-amber-100 text-amber-900 hover:bg-amber-200 border border-amber-300 transition">
                   💾 초기값 저장
                 </button>
               </div>
             </div>
 
+            <!-- NEW: Mobile-First Category Group Filter Bar (우레탄 / 시트방수 / 몰탈·보수 / 선택자재만) -->
+            <div id="materialGroupFilterBar" class="mb-3.5 bg-slate-900 p-1.5 rounded-xl flex items-center gap-1 overflow-x-auto no-print">
+              <button type="button" data-mat-group-filter="all" class="mat-group-filter-btn shrink-0 py-1.5 px-2.5 rounded-lg text-[11px] sm:text-xs font-extrabold bg-emerald-500 text-slate-950 shadow-xs transition">
+                📋 전체 묶음 보기
+              </button>
+              <button type="button" data-mat-group-filter="active" class="mat-group-filter-btn shrink-0 py-1.5 px-2.5 rounded-lg text-[11px] sm:text-xs font-bold text-slate-300 hover:text-white transition">
+                ✅ 선택된 자재만
+              </button>
+              <button type="button" id="btnFilterMainGroup" data-mat-group-filter="main" class="mat-group-filter-btn shrink-0 py-1.5 px-2.5 rounded-lg text-[11px] sm:text-xs font-bold text-emerald-300 hover:text-white transition">
+                🟢 우레탄 자재
+              </button>
+              <button type="button" id="btnFilterSheetGroup" data-mat-group-filter="sheet" class="mat-group-filter-btn shrink-0 py-1.5 px-2.5 rounded-lg text-[11px] sm:text-xs font-bold text-indigo-300 hover:text-white transition">
+                📜 시트방수
+              </button>
+              <button type="button" data-mat-group-filter="mortar" class="mat-group-filter-btn shrink-0 py-1.5 px-2.5 rounded-lg text-[11px] sm:text-xs font-bold text-amber-300 hover:text-white transition">
+                🧱 몰탈·시멘트·바탕
+              </button>
+            </div>
+
+            <!-- Collapsible Advanced System & Prep Toolbars (Collapsed by default so grouped cards appear immediately without clutter!) -->
+            <div id="topPresetBoxesWrapper" class="hidden mb-4 space-y-2.5">
             <!-- Urethane Only: System Type (2액형 표준 vs 탄성방수제 1액형 중도+상도) & Heat-Reflective Topcoat Option Toolbar -->
-            <div id="urethaneHeatOptionToolbar" class="mb-4 space-y-3">
+            <div id="urethaneHeatOptionToolbar" class="space-y-2.5">
               <!-- NEW: Waterproofing System Selector Box (기본 우레탄 / 탄성방수제 1액형 / 시트방수제 + 시트프라이머) -->
               <div class="rounded-xl border-2 border-cyan-300 bg-cyan-50/80 p-3.5 sm:p-4">
                 <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
@@ -597,9 +621,10 @@
                 * 버튼 터치(또는 아래 자재 카드 체크박스 선택) 시 견적서에 즉시 추가되며, 단가와 수량(말/포)을 자유롭게 조절할 수 있습니다.
               </p>
             </div>
+            </div>
 
-            <!-- Materials List Container -->
-            <div id="materialsContainer" class="space-y-3.5">
+            <!-- Grouped Materials Container (1. 우레탄 그룹 / 2. 시트방수 그룹 / 3. 몰탈·시멘트·바탕보수 그룹) -->
+            <div id="materialsContainer" class="space-y-4">
               <!-- Dynamically populated by JS -->
             </div>
           </section>
@@ -2716,32 +2741,6 @@
                 note: '중도+상도 개념의 1액형 탄성방수제 (1말당 약 5평 기준 · 단가/평수 자유 수정 가능)'
               },
               {
-                id: 'u_sheet_primer',
-                name: '시트방수제 프라이머 (전용 하도)',
-                role: '시트하도',
-                specUnit: '18L(1말)',
-                unitPrice: 55000,
-                coveragePerMal: 15,
-                calcMode: 'coverage',
-                manualQty: 2,
-                included: false,
-                isSheetOption: true,
-                note: '시트방수 전용 프라이머 하도 (1말당 15평 기준 · 단가/평수 자유 수정 가능)'
-              },
-              {
-                id: 'u_sheet_main',
-                name: '시트방수제 (방수시트/함침제)',
-                role: '시트방수',
-                specUnit: '18L(1말)',
-                unitPrice: 75000,
-                coveragePerMal: 5,
-                calcMode: 'coverage',
-                manualQty: 6,
-                included: false,
-                isSheetOption: true,
-                note: '시트방수제 본재/시트 (1말/롤당 5평 기준 · 단가/평수/수량 자유 수정 가능)'
-              },
-              {
                 id: 'u_heat_top',
                 name: '우레탄 차열페인트 상도 (옵션)',
                 role: '차열상도',
@@ -2766,6 +2765,32 @@
                 included: true,
                 isThinner: true,
                 note: '15L/40L 등 기준 변경 가능 — 초기값 저장 시 영구 고정됩니다'
+              },
+              {
+                id: 'u_sheet_primer',
+                name: '시트방수제 프라이머 (전용 하도)',
+                role: '시트하도',
+                specUnit: '18L(1말)',
+                unitPrice: 55000,
+                coveragePerMal: 15,
+                calcMode: 'coverage',
+                manualQty: 2,
+                included: false,
+                isSheetOption: true,
+                note: '시트방수 전용 프라이머 하도 (1말당 15평 기준 · 단가/평수 자유 수정 가능)'
+              },
+              {
+                id: 'u_sheet_main',
+                name: '시트방수제 (방수시트/함침제)',
+                role: '시트방수',
+                specUnit: '18L(1말)',
+                unitPrice: 75000,
+                coveragePerMal: 5,
+                calcMode: 'coverage',
+                manualQty: 6,
+                included: false,
+                isSheetOption: true,
+                note: '시트방수제 본재/시트 (1말/롤당 5평 기준 · 단가/평수/수량 자유 수정 가능)'
               },
               {
                 id: 'prep_conditioner',
@@ -3230,6 +3255,24 @@
               if (sItem) sItem.isSheetOption = true;
             }
           });
+        }
+        // Sort urethane materials into clean category order: Urethane -> Sheet Waterproofing -> Mortar/Prep
+        if (merged.tabs && merged.tabs.urethane && Array.isArray(merged.tabs.urethane.materials)) {
+          const orderRank = {
+            u_primer: 1,
+            u_middle: 2,
+            u_top: 3,
+            u_one_comp: 4,
+            u_heat_top: 5,
+            u_thinner: 6,
+            u_sheet_primer: 10,
+            u_sheet_main: 11,
+            prep_conditioner: 20,
+            prep_mortar: 21,
+            prep_cement: 22,
+            prep_leveling: 23
+          };
+          merged.tabs.urethane.materials.sort((a, b) => (orderRank[a.id] || 99) - (orderRank[b.id] || 99));
         }
         // Migrate prep materials (바탕조정제, 몰탈, 시멘트, 수평몰탈) & helper labor defaults across all standard tabs
         ['urethane', 'epoxy', 'elastic'].forEach(k => {
@@ -4053,11 +4096,51 @@
       if (inpVat) inpVat.placeholder = `자동 (+10%): ${formatWon(Math.round(d.totalContractAmount * 1.1))}원`;
     }
 
-    // Render Material Cards for active standard tab
+    let currentMaterialGroupFilter = 'all';
+
+    function getMaterialGroupKey(mat) {
+      if (!mat) return 'main';
+      if (mat.isSheetOption || mat.id === 'u_sheet_primer' || mat.id === 'u_sheet_main') {
+        return 'sheet';
+      }
+      if (mat.isPrepMaterial || ['prep_conditioner', 'prep_mortar', 'prep_cement', 'prep_leveling'].includes(mat.id)) {
+        return 'mortar';
+      }
+      return 'main';
+    }
+
+    function syncMaterialGroupFilterBar() {
+      const btnMain = document.getElementById('btnFilterMainGroup');
+      const btnSheet = document.getElementById('btnFilterSheetGroup');
+      if (btnMain) {
+        if (appState.activeTab === 'urethane') btnMain.textContent = '🟢 우레탄 자재';
+        else if (appState.activeTab === 'epoxy') btnMain.textContent = '🔵 에폭시 자재';
+        else if (appState.activeTab === 'elastic') btnMain.textContent = '🟣 탄성코트 3종';
+      }
+      if (btnSheet) {
+        if (appState.activeTab === 'urethane') {
+          btnSheet.classList.remove('hidden');
+        } else {
+          btnSheet.classList.add('hidden');
+          if (currentMaterialGroupFilter === 'sheet') currentMaterialGroupFilter = 'all';
+        }
+      }
+      document.querySelectorAll('.mat-group-filter-btn').forEach(btn => {
+        const fKey = btn.dataset.matGroupFilter;
+        if (fKey === currentMaterialGroupFilter) {
+          btn.className = 'mat-group-filter-btn shrink-0 py-1.5 px-2.5 rounded-lg text-[11px] sm:text-xs font-extrabold bg-emerald-500 text-slate-950 shadow-xs transition';
+        } else {
+          btn.className = 'mat-group-filter-btn shrink-0 py-1.5 px-2.5 rounded-lg text-[11px] sm:text-xs font-bold text-slate-300 hover:text-white transition';
+        }
+      });
+    }
+
+    // Render Material Cards grouped by Category (1. 우레탄/본자재, 2. 시트방수, 3. 몰탈·시멘트·바탕보수)
     function renderMaterialInputs() {
       const tab = getCurrentTabState();
       const container = document.getElementById('materialsContainer');
       container.innerHTML = '';
+      syncMaterialGroupFilterBar();
 
       const roleColors = {
         '하도': 'bg-amber-100 text-amber-800 border-amber-200',
@@ -4079,178 +4162,490 @@
 
       const effectiveArea = getEffectiveAreaPyeong(tab);
 
-      tab.materials.forEach((mat, idx) => {
-        const isIncluded = mat.included !== false;
-        const qty = calculateMaterialQty(mat, tab, appState.roundingMode);
-        const rawQty = (Number(mat.coveragePerMal) > 0) ? (effectiveArea / mat.coveragePerMal) : 0;
-        const subtotal = Math.round(qty * (Number(mat.unitPrice) || 0));
-        const badgeStyle = roleColors[mat.role] || 'bg-slate-100 text-slate-800 border-slate-200';
-        const isThinnerItem = Boolean(mat.isThinner || mat.role === '신나');
-        const unitWord = getMatUnitWord(mat);
+      // Define Category Groups
+      const mainTitle = appState.activeTab === 'urethane'
+        ? '🟢 1. 우레탄 방수 자재 묶음'
+        : (appState.activeTab === 'epoxy' ? '🔵 1. 에폭시 바닥시공 자재 묶음' : '🟣 1. 탄성코트 3종 자재 묶음');
+      const mainSubtitle = appState.activeTab === 'urethane'
+        ? '하도 · 중도 · 상도 · 탄성방수제 1액형 · 차열상도 · 신나'
+        : (appState.activeTab === 'epoxy' ? '에폭시 하도 · 중도 · 상도 · 전용 신나' : '세라믹탄성 · 월드클래스(실리카) · 제로스탑');
+      const mainBorderClass = appState.activeTab === 'urethane'
+        ? 'border-emerald-300 bg-emerald-50/30'
+        : (appState.activeTab === 'epoxy' ? 'border-blue-300 bg-blue-50/30' : 'border-purple-300 bg-purple-50/30');
+      const mainHeaderClass = appState.activeTab === 'urethane'
+        ? 'bg-emerald-900 text-white'
+        : (appState.activeTab === 'epoxy' ? 'bg-blue-900 text-white' : 'bg-purple-900 text-white');
 
-        const card = document.createElement('div');
-        card.className = `rounded-xl border p-4 transition ${isIncluded ? 'border-slate-200 bg-slate-50/60 hover:border-slate-300' : 'border-slate-200/60 bg-slate-100/50 opacity-65'}`;
-        card.innerHTML = `
-          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-            <div class="flex items-center flex-wrap gap-2">
-              <input
-                type="checkbox"
-                data-mat-idx="${idx}"
-                ${isIncluded ? 'checked' : ''}
-                class="mat-include-chk w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
-                title="견적 합산 포함 여부"
-              />
-              <span class="text-xs font-extrabold px-2.5 py-0.5 rounded-md border ${badgeStyle}">${mat.role}</span>
-              <h3 class="text-sm font-bold text-slate-900">${mat.name}</h3>
-              <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-white border border-slate-200 text-slate-600">${mat.specUnit || '1말(통)'}</span>
-            </div>
-            <div class="flex items-center gap-2">
-              ${(appState.activeTab === 'elastic' && !mat.isPrepMaterial) ? `
-                <button
-                  type="button"
-                  data-only-id="${mat.id}"
-                  class="mat-only-btn text-[11px] font-bold px-2 py-0.5 rounded bg-purple-100 text-purple-800 hover:bg-purple-200 transition"
-                >단독 선택</button>
-              ` : ''}
-              <span class="text-xs text-slate-500">자재 소계:</span>
-              <strong id="matSubtotal-${idx}" class="text-sm sm:text-base font-extrabold ${isIncluded ? 'text-slate-900' : 'text-slate-400 line-through'}">${formatWon(subtotal)}원</strong>
-            </div>
-          </div>
+      const groupDefs = [
+        {
+          key: 'main',
+          title: mainTitle,
+          subtitle: mainSubtitle,
+          wrapClass: mainBorderClass,
+          headerClass: mainHeaderClass,
+          show: true
+        },
+        {
+          key: 'sheet',
+          title: '📜 2. 시트방수 자재 묶음',
+          subtitle: '시트방수제 프라이머(전용 하도) · 시트방수제(본재/방수시트)',
+          wrapClass: 'border-indigo-300 bg-indigo-50/35',
+          headerClass: 'bg-indigo-900 text-white',
+          show: appState.activeTab === 'urethane'
+        },
+        {
+          key: 'mortar',
+          title: appState.activeTab === 'urethane' ? '🧱 3. 몰탈 · 시멘트 · 바탕보수 묶음' : '🧱 2. 몰탈 · 시멘트 · 바탕보수 묶음',
+          subtitle: '바탕조정제 · 보수용 몰탈 · 보통 시멘트 · 수평몰탈',
+          wrapClass: 'border-amber-300 bg-amber-50/35',
+          headerClass: 'bg-amber-900 text-white',
+          show: true
+        }
+      ];
 
-          ${(mat.isOneCompOption || mat.id === 'u_one_comp') ? `
-            <div class="mb-3 px-3 py-2 rounded-lg bg-cyan-50/90 border border-cyan-200 flex flex-wrap items-center justify-between gap-2">
-              <span class="text-[11px] font-bold text-cyan-950">💧 탄성방수제 1액형(중도+상도) 도포평수 빠른 변경:</span>
-              <div class="flex flex-wrap gap-1.5">
-                <button type="button" data-mat-idx="${idx}" data-onecomp-cov="3" class="onecomp-cov-btn text-[11px] font-bold px-2 py-0.5 rounded bg-white border border-cyan-300 text-cyan-900 hover:bg-cyan-100">후막 (3평/말)</button>
-                <button type="button" data-mat-idx="${idx}" data-onecomp-cov="5" class="onecomp-cov-btn text-[11px] font-bold px-2 py-0.5 rounded bg-cyan-700 text-white hover:bg-cyan-600 shadow-sm">표준 2~3회 (5평/말)</button>
-                <button type="button" data-mat-idx="${idx}" data-onecomp-cov="6" class="onecomp-cov-btn text-[11px] font-bold px-2 py-0.5 rounded bg-white border border-cyan-300 text-cyan-900 hover:bg-cyan-100">일반 (6평/말)</button>
-                <button type="button" data-mat-idx="${idx}" data-onecomp-cov="10" class="onecomp-cov-btn text-[11px] font-bold px-2 py-0.5 rounded bg-white border border-cyan-300 text-cyan-900 hover:bg-cyan-100">1회 코팅 (10평/말)</button>
-              </div>
-            </div>
-          ` : ''}
+      groupDefs.forEach(gDef => {
+        if (!gDef.show) return;
+        if (currentMaterialGroupFilter !== 'all' && currentMaterialGroupFilter !== 'active' && currentMaterialGroupFilter !== gDef.key) {
+          return;
+        }
 
-          ${(mat.id === 'u_sheet_main') ? `
-            <div class="mb-3 px-3 py-2 rounded-lg bg-indigo-50/90 border border-indigo-200 flex flex-wrap items-center justify-between gap-2">
-              <span class="text-[11px] font-bold text-indigo-950">📜 시트방수제 규격·도포평수 빠른 변경:</span>
-              <div class="flex flex-wrap gap-1.5">
-                <button type="button" data-mat-idx="${idx}" data-sheet-cov="3" data-sheet-unit="18L(1말)" class="sheet-preset-btn text-[11px] font-bold px-2 py-0.5 rounded bg-white border border-indigo-300 text-indigo-900 hover:bg-indigo-100">함침 후막 (3평/말)</button>
-                <button type="button" data-mat-idx="${idx}" data-sheet-cov="5" data-sheet-unit="18L(1말)" class="sheet-preset-btn text-[11px] font-bold px-2 py-0.5 rounded bg-indigo-700 text-white hover:bg-indigo-600 shadow-sm">표준 (5평/말)</button>
-                <button type="button" data-mat-idx="${idx}" data-sheet-cov="6" data-sheet-unit="1롤(시트)" class="sheet-preset-btn text-[11px] font-bold px-2 py-0.5 rounded bg-white border border-indigo-300 text-indigo-900 hover:bg-indigo-100">방수시트 1롤 (6평/롤)</button>
-                <button type="button" data-mat-idx="${idx}" data-sheet-cov="10" data-sheet-unit="18L(1말)" class="sheet-preset-btn text-[11px] font-bold px-2 py-0.5 rounded bg-white border border-indigo-300 text-indigo-900 hover:bg-indigo-100">일반 (10평/말)</button>
-              </div>
-            </div>
-          ` : ''}
+        const groupItems = [];
+        tab.materials.forEach((mat, idx) => {
+          if (getMaterialGroupKey(mat) === gDef.key) {
+            groupItems.push({ mat, idx });
+          }
+        });
+        if (groupItems.length === 0) return;
 
-          ${isThinnerItem ? `
-            <div class="mb-3 px-3 py-2 rounded-lg bg-purple-50/80 border border-purple-200/80 flex flex-wrap items-center justify-between gap-2">
-              <span class="text-[11px] font-bold text-purple-900">⚡ 신나 기준 빠른 변경 (변경 후 상단 [💾 현재 설정을 초기값으로 저장] 클릭 시 고정):</span>
-              <div class="flex flex-wrap gap-1.5">
-                <button type="button" data-mat-idx="${idx}" data-thinner-cov="15" data-thinner-unit="15L 기준" class="thinner-preset-btn text-[11px] font-bold px-2 py-0.5 rounded bg-white border border-purple-200 text-purple-800 hover:bg-purple-100">15L 기준 (15평/통)</button>
-                <button type="button" data-mat-idx="${idx}" data-thinner-cov="20" data-thinner-unit="20L 기준" class="thinner-preset-btn text-[11px] font-bold px-2 py-0.5 rounded bg-white border border-purple-200 text-purple-800 hover:bg-purple-100">20L 기준 (20평/통)</button>
-                <button type="button" data-mat-idx="${idx}" data-thinner-cov="40" data-thinner-unit="40L 기준" class="thinner-preset-btn text-[11px] font-bold px-2 py-0.5 rounded bg-purple-700 text-white hover:bg-purple-600 shadow-sm">40L 기준 (40평/통)</button>
-              </div>
-            </div>
-          ` : ''}
+        // Compute group stats
+        let activeCount = 0;
+        let groupSubtotal = 0;
+        groupItems.forEach(({ mat }) => {
+          if (mat.included !== false) {
+            activeCount++;
+            const q = calculateMaterialQty(mat, tab, appState.roundingMode);
+            groupSubtotal += Math.round(q * (Number(mat.unitPrice) || 0));
+          }
+        });
 
-          <div class="grid grid-cols-12 gap-1.5 sm:gap-3 items-end">
-            <!-- Unit Price -->
-            <div class="col-span-5 sm:col-span-4">
-              <label for="matPrice-${idx}" class="block text-[11px] sm:text-xs font-semibold text-slate-600 mb-1 truncate">1${unitWord} 단가</label>
-              <div class="relative flex items-center">
-                <input
-                  id="matPrice-${idx}"
-                  type="number"
-                  inputmode="decimal"
-                  min="0"
-                  step="5000"
-                  data-mat-idx="${idx}"
-                  data-field="unitPrice"
-                  value="${mat.unitPrice}"
-                  class="mat-input w-full rounded-lg border border-slate-300 bg-white px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-slate-900 pr-6 sm:pr-8"
-                />
-                <span class="absolute right-1.5 sm:right-2 text-[11px] sm:text-xs font-semibold text-slate-400 pointer-events-none">원</span>
-              </div>
-            </div>
+        const groupSec = document.createElement('div');
+        groupSec.className = `rounded-2xl border-2 ${gDef.wrapClass} overflow-hidden shadow-xs`;
 
-            <!-- Coverage per Mal -->
-            <div class="col-span-3 sm:col-span-4">
-              <div class="flex items-center justify-between mb-1">
-                <label for="matCov-${idx}" class="text-[11px] sm:text-xs font-semibold text-slate-600 truncate">1${unitWord}평수</label>
-                <button
-                  type="button"
-                  data-mat-idx="${idx}"
-                  class="toggle-calc-mode hidden sm:inline text-[10px] sm:text-[11px] font-semibold text-emerald-700 hover:underline"
-                >
-                  ${mat.calcMode === 'manual' ? '자동계산' : '직접입력'}
+        // Quick action toolbar inside each group header so user can control each group in one place!
+        let groupQuickToolbarHtml = '';
+        if (gDef.key === 'main' && appState.activeTab === 'urethane') {
+          const sysMode = getUrethaneSystemMode();
+          const heatMode = getUrethaneHeatMode();
+          groupQuickToolbarHtml = `
+            <div class="px-3 py-2 bg-white/90 border-b border-emerald-200/80 flex flex-wrap items-center justify-between gap-1.5">
+              <div class="flex flex-wrap items-center gap-1">
+                <span class="text-[10px] font-extrabold text-emerald-900 mr-0.5">빠른 세팅:</span>
+                <button type="button" data-grp-u-mode="standard" class="grp-u-mode-btn px-2 py-1 rounded-lg text-[11px] font-extrabold transition ${sysMode === 'standard' ? 'bg-emerald-700 text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-emerald-50 border border-slate-200'}">
+                  🟢 기본(하·중·상)
+                </button>
+                <button type="button" data-grp-u-mode="one_comp_primer" class="grp-u-mode-btn px-2 py-1 rounded-lg text-[11px] font-extrabold transition ${sysMode === 'one_comp_primer' ? 'bg-cyan-700 text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-cyan-50 border border-slate-200'}">
+                  💧 1액형(하도+중·상도)
+                </button>
+                <button type="button" data-grp-u-mode="one_comp_only" class="grp-u-mode-btn px-2 py-1 rounded-lg text-[11px] font-extrabold transition ${sysMode === 'one_comp_only' ? 'bg-cyan-700 text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-cyan-50 border border-slate-200'}">
+                  ⚡ 1액형 단독
                 </button>
               </div>
-              <div class="relative flex items-center">
-                <input
-                  id="matCov-${idx}"
-                  type="number"
-                  inputmode="decimal"
-                  min="0.5"
-                  step="0.5"
-                  data-mat-idx="${idx}"
-                  data-field="coveragePerMal"
-                  value="${mat.coveragePerMal}"
-                  ${mat.calcMode === 'manual' ? 'disabled' : ''}
-                  class="mat-input w-full rounded-lg border border-slate-300 ${mat.calcMode === 'manual' ? 'bg-slate-100 text-slate-400' : 'bg-white text-slate-900'} px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-bold pr-6 sm:pr-12"
-                />
-                <span class="absolute right-1.5 sm:right-2 text-[10px] sm:text-[11px] font-semibold text-slate-400 pointer-events-none">평</span>
+              <div class="flex items-center gap-1">
+                <button type="button" data-grp-heat-toggle="1" class="grp-heat-toggle-btn px-2 py-1 rounded-lg text-[11px] font-extrabold transition ${heatMode !== 'none' ? 'bg-rose-600 text-white shadow-xs' : 'bg-rose-50 text-rose-800 border border-rose-200 hover:bg-rose-100'}">
+                  ☀️ 차열상도 ${heatMode !== 'none' ? '포함중 ✓' : '+추가'}
+                </button>
               </div>
             </div>
-
-            <!-- Resulting or Manual Quantity (말) -->
-            <div class="col-span-4 sm:col-span-4">
-              <label for="matQty-${idx}" class="block text-[11px] sm:text-xs font-semibold text-slate-600 mb-1 truncate">
-                소요량(${unitWord}) <span class="text-[10px] text-slate-400 font-normal">${mat.calcMode === 'manual' ? '(수동)' : `(${rawQty.toFixed(1)}${unitWord})`}</span>
-              </label>
-              <div class="flex items-center">
-                <button
-                  type="button"
-                  data-mat-idx="${idx}"
-                  data-delta="-1"
-                  class="mat-qty-step px-2 sm:px-2.5 py-1.5 sm:py-2 rounded-l-lg border border-r-0 border-slate-300 bg-slate-100 active:bg-slate-200 text-xs font-bold text-slate-700"
-                >-</button>
-                <input
-                  id="matQty-${idx}"
-                  type="number"
-                  inputmode="decimal"
-                  min="0"
-                  step="1"
-                  data-mat-idx="${idx}"
-                  value="${qty}"
-                  class="mat-qty-input w-full border-y border-slate-300 bg-white py-1.5 sm:py-2 text-center text-xs sm:text-sm font-extrabold text-emerald-700"
-                />
-                <button
-                  type="button"
-                  data-mat-idx="${idx}"
-                  data-delta="1"
-                  class="mat-qty-step px-2 sm:px-2.5 py-1.5 sm:py-2 rounded-r-lg border border-l-0 border-slate-300 bg-slate-100 active:bg-slate-200 text-xs font-bold text-slate-700"
-                >+</button>
+          `;
+        } else if (gDef.key === 'sheet') {
+          const sysMode = getUrethaneSystemMode();
+          groupQuickToolbarHtml = `
+            <div class="px-3 py-2 bg-white/90 border-b border-indigo-200/80 flex flex-wrap items-center justify-between gap-1.5">
+              <div class="flex flex-wrap items-center gap-1">
+                <span class="text-[10px] font-extrabold text-indigo-900 mr-0.5">시트방수 빠른선택:</span>
+                <button type="button" data-grp-sheet-act="sheet_only" class="grp-sheet-act-btn px-2 py-1 rounded-lg text-[11px] font-extrabold transition ${sysMode === 'sheet_only' ? 'bg-indigo-700 text-white shadow-xs' : 'bg-indigo-50 text-indigo-900 border border-indigo-200 hover:bg-indigo-100'}">
+                  📜 시트방수 단독(프라이머+본재)
+                </button>
+                <button type="button" data-grp-sheet-act="sheet_composite" class="grp-sheet-act-btn px-2 py-1 rounded-lg text-[11px] font-extrabold transition ${sysMode === 'sheet_composite' ? 'bg-indigo-700 text-white shadow-xs' : 'bg-indigo-50 text-indigo-900 border border-indigo-200 hover:bg-indigo-100'}">
+                  🛡️ 시트+우레탄 복합방수
+                </button>
+                <button type="button" data-grp-sheet-act="add_both" class="grp-sheet-act-btn px-2 py-1 rounded-lg text-[11px] font-bold bg-white text-indigo-800 border border-indigo-200 hover:bg-indigo-50 transition">
+                  + 시트 2종 모두 체크
+                </button>
               </div>
+              <button type="button" data-grp-sheet-act="clear" class="grp-sheet-act-btn px-2 py-1 rounded-lg text-[11px] font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">
+                해제
+              </button>
+            </div>
+          `;
+        } else if (gDef.key === 'mortar') {
+          groupQuickToolbarHtml = `
+            <div class="px-3 py-2 bg-white/90 border-b border-amber-200/80 flex flex-wrap items-center justify-between gap-1.5">
+              <div class="flex flex-wrap items-center gap-1">
+                <span class="text-[10px] font-extrabold text-amber-950 mr-0.5">빠른 체크:</span>
+                <button type="button" data-grp-mortar-act="mortar_cement" class="grp-mortar-act-btn px-2 py-1 rounded-lg text-[11px] font-extrabold bg-amber-100 text-amber-950 border border-amber-300 hover:bg-amber-200 transition">
+                  🧱+🏗️ 몰탈+시멘트 세트
+                </button>
+                <button type="button" data-grp-mortar-act="all_mortar" class="grp-mortar-act-btn px-2 py-1 rounded-lg text-[11px] font-bold bg-white text-amber-900 border border-amber-200 hover:bg-amber-50 transition">
+                  + 보수 4종 전체선택
+                </button>
+              </div>
+              <button type="button" data-grp-mortar-act="clear" class="grp-mortar-act-btn px-2 py-1 rounded-lg text-[11px] font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">
+                전체 해제
+              </button>
+            </div>
+          `;
+        }
+
+        groupSec.innerHTML = `
+          <div class="px-3.5 py-2.5 sm:px-4 sm:py-3 ${gDef.headerClass} flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h3 class="text-xs sm:text-sm font-extrabold tracking-tight">${gDef.title}</h3>
+              <p class="text-[10px] sm:text-[11px] text-white/80">${gDef.subtitle}</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span id="grpSubBadge-${gDef.key}" class="text-[11px] sm:text-xs font-extrabold px-2.5 py-1 rounded-full bg-black/30 text-white border border-white/20">
+                선택 ${activeCount}종 · ${formatWon(groupSubtotal)}원
+              </span>
             </div>
           </div>
-          <p class="hidden sm:block text-[11px] text-slate-500 mt-1.5">${mat.note}</p>
+          ${groupQuickToolbarHtml}
+          <div class="p-2.5 sm:p-3.5 space-y-2.5 group-cards-body"></div>
         `;
-        container.appendChild(card);
+
+        const cardsBody = groupSec.querySelector('.group-cards-body');
+
+        groupItems.forEach(({ mat, idx }) => {
+          const isIncluded = mat.included !== false;
+          if (currentMaterialGroupFilter === 'active' && !isIncluded) {
+            // Still keep hidden inputs in DOM so IDs never disappear
+            const hiddenHolder = document.createElement('div');
+            hiddenHolder.className = 'hidden';
+            const qty = calculateMaterialQty(mat, tab, appState.roundingMode);
+            const subtotal = Math.round(qty * (Number(mat.unitPrice) || 0));
+            hiddenHolder.innerHTML = `
+              <strong id="matSubtotal-${idx}">${formatWon(subtotal)}원</strong>
+              <input id="matPrice-${idx}" type="number" data-mat-idx="${idx}" data-field="unitPrice" value="${mat.unitPrice}" class="mat-input" />
+              <input id="matCov-${idx}" type="number" data-mat-idx="${idx}" data-field="coveragePerMal" value="${mat.coveragePerMal}" class="mat-input" />
+              <input id="matQty-${idx}" type="number" data-mat-idx="${idx}" value="${qty}" class="mat-qty-input" />
+            `;
+            cardsBody.appendChild(hiddenHolder);
+            return;
+          }
+
+          const qty = calculateMaterialQty(mat, tab, appState.roundingMode);
+          const rawQty = (Number(mat.coveragePerMal) > 0) ? (effectiveArea / mat.coveragePerMal) : 0;
+          const subtotal = Math.round(qty * (Number(mat.unitPrice) || 0));
+          const badgeStyle = roleColors[mat.role] || 'bg-slate-100 text-slate-800 border-slate-200';
+          const isThinnerItem = Boolean(mat.isThinner || mat.role === '신나');
+          const isMortarBagItem = ['prep_mortar', 'prep_cement', 'prep_leveling'].includes(mat.id);
+          const unitWord = getMatUnitWord(mat);
+
+          const card = document.createElement('div');
+
+          if (!isIncluded) {
+            // COMPACT 1-LINE COLLAPSED ROW FOR UNCHECKED ITEMS (Eliminates mobile clutter!)
+            card.className = 'rounded-xl border border-dashed border-slate-300 bg-white/80 hover:bg-white px-3 py-2.5 transition flex items-center justify-between gap-2';
+            card.innerHTML = `
+              <label class="flex items-center flex-wrap gap-1.5 sm:gap-2 cursor-pointer min-w-0 flex-1">
+                <input
+                  type="checkbox"
+                  data-mat-idx="${idx}"
+                  class="mat-include-chk w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer shrink-0"
+                  title="체크 시 상세 설정이 펼쳐지고 견적에 합산됩니다"
+                />
+                <span class="text-[11px] font-extrabold px-2 py-0.5 rounded border ${badgeStyle} shrink-0">${mat.role}</span>
+                <span class="text-xs sm:text-sm font-bold text-slate-700 truncate">${mat.name}</span>
+                <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 shrink-0">${mat.specUnit || '1' + unitWord} · ${formatWon(mat.unitPrice)}원</span>
+              </label>
+              <div class="flex items-center gap-1.5 shrink-0">
+                <button
+                  type="button"
+                  data-mat-idx="${idx}"
+                  class="mat-quick-enable-btn px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-emerald-600 hover:text-white text-slate-700 border border-slate-300 text-[11px] font-extrabold transition"
+                >
+                  + 체크 추가
+                </button>
+              </div>
+              <div class="hidden">
+                <strong id="matSubtotal-${idx}">${formatWon(subtotal)}원</strong>
+                <input id="matPrice-${idx}" type="number" data-mat-idx="${idx}" data-field="unitPrice" value="${mat.unitPrice}" class="mat-input" />
+                <input id="matCov-${idx}" type="number" data-mat-idx="${idx}" data-field="coveragePerMal" value="${mat.coveragePerMal}" class="mat-input" />
+                <input id="matQty-${idx}" type="number" data-mat-idx="${idx}" value="${qty}" class="mat-qty-input" />
+              </div>
+            `;
+            cardsBody.appendChild(card);
+            return;
+          }
+
+          // EXPANDED FULL EDITOR CARD FOR CHECKED ITEMS
+          card.className = 'rounded-xl border-2 border-slate-200/90 bg-white p-3 sm:p-4 shadow-xs transition';
+          card.innerHTML = `
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+              <div class="flex items-center flex-wrap gap-1.5 sm:gap-2">
+                <input
+                  type="checkbox"
+                  data-mat-idx="${idx}"
+                  checked
+                  class="mat-include-chk w-4 h-4 sm:w-5 sm:h-5 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                  title="견적 합산 포함 여부"
+                />
+                <span class="text-[11px] sm:text-xs font-extrabold px-2 py-0.5 rounded-md border ${badgeStyle}">${mat.role}</span>
+                <h3 class="text-xs sm:text-sm font-extrabold text-slate-900">${mat.name}</h3>
+                <span class="text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-700">${mat.specUnit || '1말(통)'}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                ${(appState.activeTab === 'elastic' && !mat.isPrepMaterial) ? `
+                  <button
+                    type="button"
+                    data-only-id="${mat.id}"
+                    class="mat-only-btn text-[11px] font-bold px-2 py-0.5 rounded bg-purple-100 text-purple-800 hover:bg-purple-200 transition"
+                  >단독 선택</button>
+                ` : ''}
+                <span class="text-[11px] text-slate-500">소계:</span>
+                <strong id="matSubtotal-${idx}" class="text-sm sm:text-base font-extrabold text-slate-900">${formatWon(subtotal)}원</strong>
+              </div>
+            </div>
+
+            ${(mat.isOneCompOption || mat.id === 'u_one_comp') ? `
+              <div class="mb-2.5 px-2.5 py-2 rounded-lg bg-cyan-50/90 border border-cyan-200 flex flex-wrap items-center justify-between gap-1.5">
+                <span class="text-[11px] font-bold text-cyan-950">💧 1액형 도포평수:</span>
+                <div class="flex flex-wrap gap-1">
+                  <button type="button" data-mat-idx="${idx}" data-onecomp-cov="3" class="onecomp-cov-btn text-[11px] font-bold px-2 py-0.5 rounded ${Number(mat.coveragePerMal) === 3 ? 'bg-cyan-700 text-white shadow-xs' : 'bg-white border border-cyan-300 text-cyan-900 hover:bg-cyan-100'}">후막 3평/말</button>
+                  <button type="button" data-mat-idx="${idx}" data-onecomp-cov="5" class="onecomp-cov-btn text-[11px] font-bold px-2 py-0.5 rounded ${Number(mat.coveragePerMal) === 5 ? 'bg-cyan-700 text-white shadow-xs' : 'bg-white border border-cyan-300 text-cyan-900 hover:bg-cyan-100'}">표준 5평/말</button>
+                  <button type="button" data-mat-idx="${idx}" data-onecomp-cov="6" class="onecomp-cov-btn text-[11px] font-bold px-2 py-0.5 rounded ${Number(mat.coveragePerMal) === 6 ? 'bg-cyan-700 text-white shadow-xs' : 'bg-white border border-cyan-300 text-cyan-900 hover:bg-cyan-100'}">일반 6평/말</button>
+                  <button type="button" data-mat-idx="${idx}" data-onecomp-cov="10" class="onecomp-cov-btn text-[11px] font-bold px-2 py-0.5 rounded ${Number(mat.coveragePerMal) === 10 ? 'bg-cyan-700 text-white shadow-xs' : 'bg-white border border-cyan-300 text-cyan-900 hover:bg-cyan-100'}">1회 10평/말</button>
+                </div>
+              </div>
+            ` : ''}
+
+            ${(mat.id === 'u_sheet_main') ? `
+              <div class="mb-2.5 px-2.5 py-2 rounded-lg bg-indigo-50/90 border border-indigo-200 flex flex-wrap items-center justify-between gap-1.5">
+                <span class="text-[11px] font-bold text-indigo-950">📜 시트방수제 규격·평수:</span>
+                <div class="flex flex-wrap gap-1">
+                  <button type="button" data-mat-idx="${idx}" data-sheet-cov="3" data-sheet-unit="18L(1말)" class="sheet-preset-btn text-[11px] font-bold px-2 py-0.5 rounded ${Number(mat.coveragePerMal) === 3 ? 'bg-indigo-700 text-white shadow-xs' : 'bg-white border border-indigo-300 text-indigo-900 hover:bg-indigo-100'}">함침후막 3평/말</button>
+                  <button type="button" data-mat-idx="${idx}" data-sheet-cov="5" data-sheet-unit="18L(1말)" class="sheet-preset-btn text-[11px] font-bold px-2 py-0.5 rounded ${Number(mat.coveragePerMal) === 5 ? 'bg-indigo-700 text-white shadow-xs' : 'bg-white border border-indigo-300 text-indigo-900 hover:bg-indigo-100'}">표준 5평/말</button>
+                  <button type="button" data-mat-idx="${idx}" data-sheet-cov="6" data-sheet-unit="1롤(시트)" class="sheet-preset-btn text-[11px] font-bold px-2 py-0.5 rounded ${Number(mat.coveragePerMal) === 6 ? 'bg-indigo-700 text-white shadow-xs' : 'bg-white border border-indigo-300 text-indigo-900 hover:bg-indigo-100'}">시트1롤 6평/롤</button>
+                  <button type="button" data-mat-idx="${idx}" data-sheet-cov="10" data-sheet-unit="18L(1말)" class="sheet-preset-btn text-[11px] font-bold px-2 py-0.5 rounded ${Number(mat.coveragePerMal) === 10 ? 'bg-indigo-700 text-white shadow-xs' : 'bg-white border border-indigo-300 text-indigo-900 hover:bg-indigo-100'}">일반 10평/말</button>
+                </div>
+              </div>
+            ` : ''}
+
+            ${isThinnerItem ? `
+              <div class="mb-2.5 px-2.5 py-2 rounded-lg bg-purple-50/80 border border-purple-200/80 flex flex-wrap items-center justify-between gap-1.5">
+                <span class="text-[11px] font-bold text-purple-900">⚡ 신나 기준 빠른 변경:</span>
+                <div class="flex flex-wrap gap-1">
+                  <button type="button" data-mat-idx="${idx}" data-thinner-cov="15" data-thinner-unit="15L 기준" class="thinner-preset-btn text-[11px] font-bold px-2 py-0.5 rounded ${Number(mat.coveragePerMal) === 15 ? 'bg-purple-700 text-white shadow-xs' : 'bg-white border border-purple-200 text-purple-800 hover:bg-purple-100'}">15L (15평)</button>
+                  <button type="button" data-mat-idx="${idx}" data-thinner-cov="20" data-thinner-unit="20L 기준" class="thinner-preset-btn text-[11px] font-bold px-2 py-0.5 rounded ${Number(mat.coveragePerMal) === 20 ? 'bg-purple-700 text-white shadow-xs' : 'bg-white border border-purple-200 text-purple-800 hover:bg-purple-100'}">20L (20평)</button>
+                  <button type="button" data-mat-idx="${idx}" data-thinner-cov="40" data-thinner-unit="40L 기준" class="thinner-preset-btn text-[11px] font-bold px-2 py-0.5 rounded ${Number(mat.coveragePerMal) === 40 ? 'bg-purple-700 text-white shadow-xs' : 'bg-white border border-purple-200 text-purple-800 hover:bg-purple-100'}">40L (40평)</button>
+                </div>
+              </div>
+            ` : ''}
+
+            ${isMortarBagItem ? `
+              <div class="mb-2.5 px-2.5 py-2 rounded-lg bg-amber-50/90 border border-amber-200 flex flex-wrap items-center justify-between gap-1.5">
+                <span class="text-[11px] font-bold text-amber-950">🧱 포수 빠른 선택:</span>
+                <div class="flex flex-wrap gap-1">
+                  <button type="button" data-mat-idx="${idx}" data-bag-qty="2" class="mortar-bag-preset-btn text-[11px] font-bold px-2 py-0.5 rounded bg-white border border-amber-300 text-amber-900 hover:bg-amber-100">2포</button>
+                  <button type="button" data-mat-idx="${idx}" data-bag-qty="3" class="mortar-bag-preset-btn text-[11px] font-bold px-2 py-0.5 rounded bg-white border border-amber-300 text-amber-900 hover:bg-amber-100">3포</button>
+                  <button type="button" data-mat-idx="${idx}" data-bag-qty="5" class="mortar-bag-preset-btn text-[11px] font-bold px-2 py-0.5 rounded bg-white border border-amber-300 text-amber-900 hover:bg-amber-100">5포</button>
+                  <button type="button" data-mat-idx="${idx}" data-bag-qty="10" class="mortar-bag-preset-btn text-[11px] font-bold px-2 py-0.5 rounded bg-white border border-amber-300 text-amber-900 hover:bg-amber-100">10포</button>
+                  <button type="button" data-mat-idx="${idx}" data-bag-qty="20" class="mortar-bag-preset-btn text-[11px] font-bold px-2 py-0.5 rounded bg-white border border-amber-300 text-amber-900 hover:bg-amber-100">20포</button>
+                  <button type="button" data-mat-idx="${idx}" data-bag-auto="1" class="mortar-bag-preset-btn text-[11px] font-bold px-2 py-0.5 rounded ${mat.calcMode === 'coverage' ? 'bg-amber-700 text-white' : 'bg-white border border-amber-300 text-amber-900'}">평수비례</button>
+                </div>
+              </div>
+            ` : ''}
+
+            <div class="grid grid-cols-12 gap-1.5 sm:gap-3 items-end">
+              <!-- Unit Price -->
+              <div class="col-span-5 sm:col-span-4">
+                <label for="matPrice-${idx}" class="block text-[11px] sm:text-xs font-semibold text-slate-600 mb-1 truncate">1${unitWord} 단가</label>
+                <div class="relative flex items-center">
+                  <input
+                    id="matPrice-${idx}"
+                    type="number"
+                    inputmode="decimal"
+                    min="0"
+                    step="5000"
+                    data-mat-idx="${idx}"
+                    data-field="unitPrice"
+                    value="${mat.unitPrice}"
+                    class="mat-input w-full rounded-lg border border-slate-300 bg-white px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-slate-900 pr-6 sm:pr-8"
+                  />
+                  <span class="absolute right-1.5 sm:right-2 text-[11px] sm:text-xs font-semibold text-slate-400 pointer-events-none">원</span>
+                </div>
+              </div>
+
+              <!-- Coverage per Mal -->
+              <div class="col-span-3 sm:col-span-4">
+                <div class="flex items-center justify-between mb-1">
+                  <label for="matCov-${idx}" class="text-[11px] sm:text-xs font-semibold text-slate-600 truncate">1${unitWord}평수</label>
+                  <button
+                    type="button"
+                    data-mat-idx="${idx}"
+                    class="toggle-calc-mode hidden sm:inline text-[10px] sm:text-[11px] font-semibold text-emerald-700 hover:underline"
+                  >
+                    ${mat.calcMode === 'manual' ? '자동계산' : '직접입력'}
+                  </button>
+                </div>
+                <div class="relative flex items-center">
+                  <input
+                    id="matCov-${idx}"
+                    type="number"
+                    inputmode="decimal"
+                    min="0.5"
+                    step="0.5"
+                    data-mat-idx="${idx}"
+                    data-field="coveragePerMal"
+                    value="${mat.coveragePerMal}"
+                    ${mat.calcMode === 'manual' ? 'disabled' : ''}
+                    class="mat-input w-full rounded-lg border border-slate-300 ${mat.calcMode === 'manual' ? 'bg-slate-100 text-slate-400' : 'bg-white text-slate-900'} px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-bold pr-6 sm:pr-12"
+                  />
+                  <span class="absolute right-1.5 sm:right-2 text-[10px] sm:text-[11px] font-semibold text-slate-400 pointer-events-none">평</span>
+                </div>
+              </div>
+
+              <!-- Resulting or Manual Quantity (말/포/롤) -->
+              <div class="col-span-4 sm:col-span-4">
+                <label for="matQty-${idx}" class="block text-[11px] sm:text-xs font-semibold text-slate-600 mb-1 truncate">
+                  소요량(${unitWord}) <span class="text-[10px] text-slate-400 font-normal">${mat.calcMode === 'manual' ? '(수동)' : `(${rawQty.toFixed(1)}${unitWord})`}</span>
+                </label>
+                <div class="flex items-center">
+                  <button
+                    type="button"
+                    data-mat-idx="${idx}"
+                    data-delta="-1"
+                    class="mat-qty-step px-2 sm:px-2.5 py-1.5 sm:py-2 rounded-l-lg border border-r-0 border-slate-300 bg-slate-100 active:bg-slate-200 text-xs font-bold text-slate-700"
+                  >-</button>
+                  <input
+                    id="matQty-${idx}"
+                    type="number"
+                    inputmode="decimal"
+                    min="0"
+                    step="1"
+                    data-mat-idx="${idx}"
+                    value="${qty}"
+                    class="mat-qty-input w-full border-y border-slate-300 bg-white py-1.5 sm:py-2 text-center text-xs sm:text-sm font-extrabold text-emerald-700"
+                  />
+                  <button
+                    type="button"
+                    data-mat-idx="${idx}"
+                    data-delta="1"
+                    class="mat-qty-step px-2 sm:px-2.5 py-1.5 sm:py-2 rounded-r-lg border border-l-0 border-slate-300 bg-slate-100 active:bg-slate-200 text-xs font-bold text-slate-700"
+                  >+</button>
+                </div>
+              </div>
+            </div>
+            <p class="hidden sm:block text-[11px] text-slate-500 mt-1.5">${mat.note}</p>
+          `;
+          cardsBody.appendChild(card);
+        });
+
+        container.appendChild(groupSec);
       });
 
-      // Attach listeners
+      // Attach listeners for checkboxes & quick-enable buttons
+      const handleMaterialToggle = (idx, checked) => {
+        const tab = getCurrentTabState();
+        tab.materials[idx].included = checked;
+        if (appState.activeTab === 'elastic') {
+          const includedIds = tab.materials.filter(m => !m.isPrepMaterial && m.included !== false).map(m => m.id);
+          if (includedIds.length === 3) tab.elasticSelectMode = 'all';
+          else if (includedIds.length === 1) tab.elasticSelectMode = includedIds[0];
+          else tab.elasticSelectMode = 'custom';
+          syncElasticToolbarButtons();
+        } else if (appState.activeTab === 'urethane') {
+          syncUrethaneHeatToolbar();
+        }
+        syncPrepMaterialsToolbar();
+        renderMaterialInputs();
+        updateCalculationsOnly();
+      };
+
       container.querySelectorAll('.mat-include-chk').forEach(chk => {
         chk.addEventListener('change', (e) => {
-          const idx = Number(e.target.dataset.matIdx);
-          const tab = getCurrentTabState();
-          tab.materials[idx].included = e.target.checked;
-          if (appState.activeTab === 'elastic') {
-            const includedIds = tab.materials.filter(m => !m.isPrepMaterial && m.included !== false).map(m => m.id);
-            if (includedIds.length === 3) tab.elasticSelectMode = 'all';
-            else if (includedIds.length === 1) tab.elasticSelectMode = includedIds[0];
-            else tab.elasticSelectMode = 'custom';
-            syncElasticToolbarButtons();
-          } else if (appState.activeTab === 'urethane') {
+          handleMaterialToggle(Number(e.target.dataset.matIdx), e.target.checked);
+        });
+      });
+
+      container.querySelectorAll('.mat-quick-enable-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const idx = Number(e.currentTarget.dataset.matIdx);
+          handleMaterialToggle(idx, true);
+          const mName = getCurrentTabState().materials[idx]?.name || '자재';
+          showToast(`✅ ${mName} 항목이 추가되어 상세 입력창이 열렸습니다.`);
+        });
+      });
+
+      // Group header quick action buttons: Urethane group
+      container.querySelectorAll('.grp-u-mode-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const mode = e.currentTarget.dataset.grpUMode;
+          const targetTopBtn = document.querySelector(`.urethane-sys-btn[data-u-sys="${mode}"]`);
+          if (targetTopBtn) targetTopBtn.click();
+        });
+      });
+
+      container.querySelectorAll('.grp-heat-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const uTab = appState.tabs.urethane;
+          const heatMat = uTab.materials.find(m => m.id === 'u_heat_top');
+          if (heatMat) {
+            heatMat.included = !(heatMat.included !== false);
             syncUrethaneHeatToolbar();
+            renderMaterialInputs();
+            updateCalculationsOnly();
+            showToast(heatMat.included ? '☀️ 우레탄 차열페인트 상도가 추가되었습니다.' : '차열페인트 상도가 해제되었습니다.');
+          }
+        });
+      });
+
+      // Group header quick action buttons: Sheet Waterproofing group
+      container.querySelectorAll('.grp-sheet-act-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const act = e.currentTarget.dataset.grpSheetAct;
+          const uTab = appState.tabs.urethane;
+          const spMat = uTab.materials.find(m => m.id === 'u_sheet_primer');
+          const smMat = uTab.materials.find(m => m.id === 'u_sheet_main');
+          if (act === 'sheet_only' || act === 'sheet_composite') {
+            const targetTopBtn = document.querySelector(`.urethane-sys-btn[data-u-sys="${act}"]`);
+            if (targetTopBtn) targetTopBtn.click();
+            return;
+          } else if (act === 'add_both') {
+            if (spMat) spMat.included = true;
+            if (smMat) smMat.included = true;
+            showToast('📜 시트방수제 프라이머 + 시트방수제 2종이 모두 선택되었습니다.');
+          } else if (act === 'clear') {
+            if (spMat) spMat.included = false;
+            if (smMat) smMat.included = false;
+            showToast('시트방수 자재 묶음이 모두 해제되었습니다.');
+          }
+          syncUrethaneHeatToolbar();
+          renderMaterialInputs();
+          updateCalculationsOnly();
+        });
+      });
+
+      // Group header quick action buttons: Mortar / Cement / Prep group
+      container.querySelectorAll('.grp-mortar-act-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const act = e.currentTarget.dataset.grpMortarAct;
+          const tab = getCurrentTabState();
+          if (act === 'mortar_cement') {
+            tab.materials.forEach(m => {
+              if (m.id === 'prep_mortar' || m.id === 'prep_cement') m.included = true;
+            });
+            showToast('🧱 보수 몰탈 + 🏗️ 보통 시멘트 세트가 선택되었습니다.');
+          } else if (act === 'all_mortar') {
+            tab.materials.forEach(m => {
+              if (getMaterialGroupKey(m) === 'mortar') m.included = true;
+            });
+            showToast('🧱 몰탈·시멘트·바탕보수 4종이 모두 선택되었습니다.');
+          } else if (act === 'clear') {
+            tab.materials.forEach(m => {
+              if (getMaterialGroupKey(m) === 'mortar') m.included = false;
+            });
+            showToast('몰탈·시멘트·바탕보수 자재가 모두 해제되었습니다.');
           }
           syncPrepMaterialsToolbar();
           renderMaterialInputs();
@@ -4316,6 +4711,24 @@
           renderMaterialInputs();
           updateCalculationsOnly();
           showToast(`${mat.name} 기준이 ${unit} (${cov}평/통)으로 변경되었습니다.`);
+        });
+      });
+
+      container.querySelectorAll('.mortar-bag-preset-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const idx = Number(e.currentTarget.dataset.matIdx);
+          const mat = getCurrentTabState().materials[idx];
+          if (e.currentTarget.dataset.bagAuto) {
+            mat.calcMode = 'coverage';
+            showToast(`${mat.name} 물량이 시공평수 비례 자동계산으로 전환되었습니다.`);
+          } else {
+            const bQty = Number(e.currentTarget.dataset.bagQty) || 1;
+            mat.calcMode = 'manual';
+            mat.manualQty = bQty;
+            showToast(`${mat.name} 수량이 ${bQty}포로 설정되었습니다.`);
+          }
+          renderMaterialInputs();
+          updateCalculationsOnly();
         });
       });
 
@@ -4448,14 +4861,29 @@
       const summaryMaterialsList = document.getElementById('summaryMaterialsList');
       summaryMaterialsList.innerHTML = '';
 
+      const grpTotals = { main: { cnt: 0, sum: 0 }, sheet: { cnt: 0, sum: 0 }, mortar: { cnt: 0, sum: 0 } };
+      const grpLabels = {
+        main: appState.activeTab === 'urethane' ? '🟢 우레탄 방수' : (appState.activeTab === 'epoxy' ? '🔵 에폭시' : '🟣 탄성코트'),
+        sheet: '📜 시트방수',
+        mortar: '🧱 몰탈·시멘트·보수'
+      };
+      let excludedCount = 0;
+
       tab.materials.forEach((mat, idx) => {
         const isIncluded = mat.included !== false;
         const qty = calculateMaterialQty(mat, tab, appState.roundingMode);
         const subtotal = Math.round(qty * (Number(mat.unitPrice) || 0));
+        const gKey = getMaterialGroupKey(mat);
 
         if (isIncluded) {
           materialTotal += subtotal;
           totalMalCount += qty;
+          if (grpTotals[gKey]) {
+            grpTotals[gKey].cnt += 1;
+            grpTotals[gKey].sum += subtotal;
+          }
+        } else {
+          excludedCount += 1;
         }
 
         const subEl = document.getElementById(`matSubtotal-${idx}`);
@@ -4465,21 +4893,40 @@
           qtyInput.value = qty;
         }
 
+        if (!isIncluded) return;
+
         const row = document.createElement('div');
-        row.className = `py-2.5 flex items-center justify-between ${isIncluded ? '' : 'opacity-45'}`;
+        row.className = 'py-2 flex items-center justify-between gap-2';
         const uWord = getMatUnitWord(mat);
         const modeNote = mat.calcMode === 'manual'
           ? `수량 직접지정 (${qty}${uWord} × ${formatWon(mat.unitPrice)}원)`
           : `${mat.specUnit || '1' + uWord}당 ${mat.coveragePerMal}평 → ${qty}${uWord} × ${formatWon(mat.unitPrice)}원`;
 
         row.innerHTML = `
-          <div>
-            <span class="font-semibold text-slate-200">${mat.name} ${isIncluded ? '' : '(제외됨)'}</span>
-            <span class="block text-[11px] text-slate-400">${modeNote}</span>
+          <div class="min-w-0">
+            <div class="flex items-center gap-1.5">
+              <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 shrink-0">${grpLabels[gKey] || '자재'}</span>
+              <span class="font-semibold text-slate-100 truncate">${mat.name}</span>
+            </div>
+            <span class="block text-[11px] text-slate-400 mt-0.5">${modeNote}</span>
           </div>
-          <span class="font-bold text-white">${isIncluded ? `${formatWon(subtotal)}원` : '0원'}</span>
+          <span class="font-bold text-white shrink-0">${formatWon(subtotal)}원</span>
         `;
         summaryMaterialsList.appendChild(row);
+      });
+
+      if (excludedCount > 0) {
+        const exRow = document.createElement('div');
+        exRow.className = 'py-1.5 text-[11px] text-slate-400 flex items-center justify-between';
+        exRow.innerHTML = `<span>미선택 옵션 자재 (${excludedCount}종 제외됨)</span><span>0원</span>`;
+        summaryMaterialsList.appendChild(exRow);
+      }
+
+      ['main', 'sheet', 'mortar'].forEach(gk => {
+        const badgeEl = document.getElementById(`grpSubBadge-${gk}`);
+        if (badgeEl && grpTotals[gk]) {
+          badgeEl.textContent = `선택 ${grpTotals[gk].cnt}종 · ${formatWon(grpTotals[gk].sum)}원`;
+        }
       });
 
       // Populate Elastic 3-Type Standalone Comparison Box
@@ -5147,7 +5594,22 @@
         sec.className = 'bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6 space-y-4';
 
         let matRowsHtml = '';
+        let lastGrpKey = '';
+        const admGrpTitles = {
+          main: cfg.key === 'urethane' ? '🟢 우레탄 방수 자재 묶음' : (cfg.key === 'epoxy' ? '🔵 에폭시 본시공 자재 묶음' : '🟣 탄성코트 3종 자재 묶음'),
+          sheet: '📜 시트방수 자재 묶음 (시트프라이머 · 시트방수제)',
+          mortar: '🧱 몰탈 · 시멘트 · 바탕보수 자재 묶음'
+        };
         t.materials.forEach((m, mIdx) => {
+          const gKey = getMaterialGroupKey(m);
+          if (gKey !== lastGrpKey) {
+            lastGrpKey = gKey;
+            matRowsHtml += `
+              <tr class="bg-slate-100/90 border-y border-slate-200">
+                <td colspan="4" data-label="자재 그룹" class="py-1.5 px-2.5 text-xs font-extrabold text-slate-800">${admGrpTitles[gKey] || '자재 그룹'}</td>
+              </tr>
+            `;
+          }
           matRowsHtml += `
             <tr class="border-b border-slate-100">
               <td data-label="자재명" class="py-2.5 pr-2">
@@ -5630,6 +6092,30 @@
           syncUIWithActiveTab();
         });
       });
+
+      // Material Category Group Filter Buttons (전체 / 선택자재만 / 우레탄 / 시트방수 / 몰탈·보수)
+      document.querySelectorAll('.mat-group-filter-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          currentMaterialGroupFilter = e.currentTarget.dataset.matGroupFilter || 'all';
+          renderMaterialInputs();
+          updateCalculationsOnly();
+        });
+      });
+
+      const btnToggleTopPresetBoxes = document.getElementById('btnToggleTopPresetBoxes');
+      const topPresetBoxesWrapper = document.getElementById('topPresetBoxesWrapper');
+      if (btnToggleTopPresetBoxes && topPresetBoxesWrapper) {
+        btnToggleTopPresetBoxes.addEventListener('click', () => {
+          const isHidden = topPresetBoxesWrapper.classList.contains('hidden');
+          if (isHidden) {
+            topPresetBoxesWrapper.classList.remove('hidden');
+            btnToggleTopPresetBoxes.textContent = '⚙️ 공법 일괄전환 옵션 접기 ▴';
+          } else {
+            topPresetBoxesWrapper.classList.add('hidden');
+            btnToggleTopPresetBoxes.textContent = '⚙️ 공법 일괄전환 옵션 ▾';
+          }
+        });
+      }
 
       // Quick Save Current State as Default
       document.getElementById('btnSaveCurrentAsDefault').addEventListener('click', () => {
