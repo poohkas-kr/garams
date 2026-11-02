@@ -67,7 +67,10 @@
       body.print-customer-only #customerMarginControlCol,
       body.print-customer-only #detailedQuoteCardWrap,
       body.print-customer-only #quoteViewSwitcherBar,
-      body.print-customer-only header {
+      body.print-customer-only header,
+      body.print-customer-only #topQuoteStorageBar,
+      body.print-detailed-only #topQuoteStorageBar,
+      body.print-contract-only #topQuoteStorageBar {
         display: none !important;
       }
       body.print-detailed-only #standardCalcView,
@@ -164,25 +167,28 @@
         padding-top: 0 !important;
         border-top: 0 !important;
       }
-      body.customer-only-mode #mobileStepNavBar {
+      body.customer-only-mode #mobileStepNavBar,
+      body.customer-only-mode #topQuoteStorageBar {
         display: none !important;
       }
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col mob-step-input">
+<body class="min-h-screen flex flex-col mob-step-all">
 
   <!-- Top Header (Compact Mobile App Header + Sticky Desktop Header) -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
     <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2 sm:py-3 flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center justify-between gap-2 sm:gap-3">
       <div class="flex items-center justify-between gap-2">
         <div class="flex items-center gap-2 min-w-0">
-          <div id="brandBadge" class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-extrabold text-sm sm:text-lg shadow-sm transition-colors shrink-0">
-            시공
+          <div id="brandBadge" class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-emerald-600 flex flex-col items-center justify-center text-white font-black text-[11px] sm:text-xs leading-tight shadow-sm transition-colors shrink-0 px-1">
+            <span>가람</span>
+            <span class="text-[9px] sm:text-[10px] font-bold opacity-90">상사</span>
           </div>
           <div class="min-w-0">
             <div class="flex items-center flex-wrap gap-1 sm:gap-2">
-              <h1 class="text-sm sm:text-xl font-extrabold tracking-tight text-slate-900 truncate">방수·바닥·도장·페인트 계산기</h1>
+              <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-slate-900 text-amber-300 text-[10px] sm:text-xs font-black tracking-tight shrink-0">가람상사</span>
+              <h1 class="text-xs sm:text-xl font-extrabold tracking-tight text-slate-900 truncate">방수·바닥·도장·페인트 계산기</h1>
               <span id="modeStatusBadge" class="hidden sm:inline-block text-[11px] sm:text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
                 우레탄 실전세팅 완료
               </span>
@@ -190,12 +196,17 @@
                 ★ 초기값고정
               </span>
             </div>
-            <p class="hidden sm:block text-xs text-slate-500">평수·실측별 자재 소요량(말/L/통) · 인건비 · 사다리/스카이 · 폐기물 · 잡비 · 견적서 스크린샷</p>
+            <p class="hidden sm:block text-xs text-slate-500">가람상사 (355-30-01702 · 대표 조연주) · 우레탄 · 에폭시(코팅/라이닝) · 탄성코트 · 페인트 · 견적보관함</p>
           </div>
+          <img id="headerGaramStampPreview" src="" alt="가람상사 로고 명판" class="hidden xl:block h-9 w-auto object-contain border border-slate-200 rounded-lg px-1.5 py-0.5 bg-white shadow-2xs shrink-0" />
         </div>
 
         <!-- Mobile-Only Compact Header Quick Actions (Prevents 7-button clutter on phone screens) -->
         <div class="flex sm:hidden items-center gap-1 shrink-0 no-print">
+          <button id="btnMobileOpenQuoteStorage" type="button" class="px-2 py-1.5 rounded-lg text-[11px] font-extrabold text-amber-950 bg-amber-400 active:bg-amber-500 shadow-xs flex items-center gap-0.5">
+            <span>📂 보관함</span>
+            <span id="mobileHdrQuoteCountBadge" class="text-[10px] px-1 rounded bg-slate-900 text-amber-300">0/30</span>
+          </button>
           <button id="btnMobileQuickCustomerMode" type="button" class="px-2 py-1.5 rounded-lg text-[11px] font-extrabold text-white bg-indigo-600 active:bg-indigo-700 shadow-xs">
             👀 고객화면
           </button>
@@ -208,6 +219,10 @@
 
       <!-- Utility Buttons Drawer (Collapsed on mobile until tapped, always visible on sm+ desktop) -->
       <div id="headerUtilityDrawer" class="hidden sm:flex sm:flex-wrap grid-cols-2 gap-1.5 sm:gap-2 pt-1.5 sm:pt-0 border-t sm:border-t-0 border-slate-100 no-print">
+        <button id="btnHeaderOpenQuoteStorage" type="button" class="px-2.5 sm:px-3 py-2 rounded-lg text-[11px] sm:text-xs font-extrabold text-slate-950 bg-amber-400 hover:bg-amber-300 border border-amber-500 transition flex items-center justify-center gap-1.5 shadow-sm" title="최대 30개까지 견적을 저장하고 언제든 다시 불러올 수 있는 견적 보관함을 엽니다">
+          <span>📂 견적 보관함 (저장/불러오기)</span>
+          <span id="headerQuoteCountBadge" class="px-1.5 py-0.5 rounded-full bg-slate-900 text-amber-300 text-[10px] font-extrabold">0/30</span>
+        </button>
         <button id="btnHeaderScreenshotQuote" type="button" class="px-2.5 sm:px-3 py-2 rounded-lg text-[11px] sm:text-xs font-extrabold text-white bg-emerald-600 hover:bg-emerald-500 transition flex items-center justify-center gap-1 shadow-sm" title="원가·물량을 숨긴 고객용 통합 견적서 이미지를 캡처·저장합니다">
           <span>📸 고객 견적서 스크린샷</span>
         </button>
@@ -264,7 +279,10 @@
 
       <!-- Mobile App 3-Step View Switcher Bar (Eliminates endless vertical scrolling on mobile!) -->
       <div id="mobileStepNavBar" class="lg:hidden mt-1.5 grid grid-cols-4 gap-1 bg-slate-900 p-1 rounded-xl shadow-xs">
-        <button type="button" data-mob-step="input" class="mob-step-btn py-1.5 px-1 rounded-lg text-[11px] font-extrabold bg-emerald-500 text-slate-950 shadow-xs transition truncate">
+        <button type="button" data-mob-step="all" class="mob-step-btn py-1.5 px-1 rounded-lg text-[11px] font-extrabold bg-emerald-500 text-slate-950 shadow-xs transition truncate">
+          ↕️ 전체보기
+        </button>
+        <button type="button" data-mob-step="input" class="mob-step-btn py-1.5 px-1 rounded-lg text-[11px] font-bold text-slate-300 hover:text-white transition truncate">
           ① 단가·물량입력
         </button>
         <button type="button" data-mob-step="summary" class="mob-step-btn py-1.5 px-1 rounded-lg text-[11px] font-bold text-slate-300 hover:text-white transition truncate">
@@ -273,15 +291,72 @@
         <button type="button" data-mob-step="quote" class="mob-step-btn py-1.5 px-1 rounded-lg text-[11px] font-bold text-slate-300 hover:text-white transition truncate">
           ③ 견적서·캡처
         </button>
-        <button type="button" data-mob-step="all" class="mob-step-btn py-1.5 px-1 rounded-lg text-[11px] font-bold text-slate-400 hover:text-white transition truncate">
-          ↕️ 전체보기
-        </button>
       </div>
     </div>
   </header>
 
   <!-- Main Content Container (pb-24 on mobile for floating bottom quick bar) -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-2.5 sm:px-6 lg:px-8 py-3 sm:py-6 pb-32 lg:pb-8">
+
+    <!-- ========================================================== -->
+    <!-- TOP QUICK QUOTE SAVE & 30-SLOT STORAGE BAR (견적 30개 저장·불러오기) -->
+    <!-- ========================================================== -->
+    <section id="topQuoteStorageBar" class="mb-4 sm:mb-6 bg-slate-900 text-white rounded-2xl border border-slate-700 p-3 sm:p-4 shadow-md no-print">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-2.5 sm:gap-3">
+        <div class="flex items-center flex-wrap gap-2">
+          <span class="px-2.5 py-1 rounded-lg bg-amber-400 text-slate-950 text-xs font-extrabold flex items-center gap-1 shrink-0">
+            <span>📂 견적 저장소</span>
+            <span id="topBarQuoteCountBadge" class="px-1.5 py-0.5 rounded bg-slate-900 text-amber-300 text-[10px]">0 / 30개</span>
+          </span>
+          <div>
+            <h2 class="text-xs sm:text-sm font-extrabold text-white">현장별 견적 저장 · 불러오기 (최소 20개 이상 · 총 30칸 슬롯 지원)</h2>
+            <p id="activeLoadedSlotIndicator" class="text-[11px] text-slate-300">현재 계산 중인 견적(자재·직접입력 공사비·마진·계약서)을 이름 붙여 저장하고 언제든 불러오세요.</p>
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-1.5 sm:gap-2 flex-1 lg:max-w-2xl justify-end">
+          <input
+            id="inputQuickQuoteTitle"
+            type="text"
+            placeholder="저장할 견적 이름/메모 (비워두면 현장명·평수·금액 자동 입력)"
+            class="flex-1 rounded-xl border border-slate-600 bg-slate-800/90 focus:bg-slate-800 focus:border-amber-400 px-3 py-2 text-xs font-bold text-white placeholder-slate-400"
+          />
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button
+              id="btnQuickSaveQuoteNow"
+              type="button"
+              class="flex-1 sm:flex-initial px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs transition shadow flex items-center justify-center gap-1 whitespace-nowrap"
+              title="현재 화면의 견적을 새 슬롯에 즉시 저장합니다"
+            >
+              <span>📥 현재 견적 저장</span>
+            </button>
+            <button
+              id="btnUpdateActiveSlotQuote"
+              type="button"
+              class="hidden px-3 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-extrabold text-xs transition shadow items-center justify-center gap-1 whitespace-nowrap"
+              title="현재 불러온 슬롯에 수정된 견적을 덮어씁니다"
+            >
+              <span>🔄 현재슬롯 덮어쓰기</span>
+            </button>
+            <button
+              id="btnOpenQuoteStorageModal"
+              type="button"
+              class="px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs transition shadow flex items-center justify-center gap-1 whitespace-nowrap"
+            >
+              <span>📂 보관함 목록 열기</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Saved Quotes Horizontal Pill Strip -->
+      <div id="quickSavedQuotesStripWrap" class="mt-2.5 pt-2.5 border-t border-slate-800 flex items-center gap-2 overflow-x-auto">
+        <span class="text-[11px] font-bold text-amber-300 shrink-0">⚡ 빠른 불러오기:</span>
+        <div id="quickSavedQuotesStrip" class="flex items-center gap-1.5 overflow-x-auto py-0.5">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </section>
 
     <!-- ========================================================== -->
     <!-- VIEW 1: STANDARD CALCULATOR (우레탄 / 에폭시 / 탄성코트 3종) -->
@@ -310,8 +385,27 @@
         <!-- Left Column: Inputs (7 cols on desktop) -->
         <div id="standardInputCol" class="lg:col-span-7 space-y-4 sm:space-y-6">
 
+          <!-- Construction Step-by-Step Order Navigator (순서에 맞게 정리된 4단계 바로가기) -->
+          <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-2.5 sm:p-3 flex flex-wrap items-center justify-between gap-2 no-print">
+            <span class="text-[11px] sm:text-xs font-extrabold text-slate-700 px-1">📋 시공 계산 순서 바로가기:</span>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 flex-1">
+              <button type="button" data-scroll-sec="step1AreaSection" class="step-nav-scroll-btn py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-emerald-50 hover:text-emerald-800 border border-slate-200 text-[11px] font-extrabold text-slate-800 transition truncate">
+                ① 시공 면적 입력
+              </button>
+              <button type="button" data-scroll-sec="step2MaterialSection" class="step-nav-scroll-btn py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-emerald-50 hover:text-emerald-800 border border-slate-200 text-[11px] font-extrabold text-slate-800 transition truncate">
+                ② 본자재·보수 설정
+              </button>
+              <button type="button" data-scroll-sec="step3LaborSection" class="step-nav-scroll-btn py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-emerald-50 hover:text-emerald-800 border border-slate-200 text-[11px] font-extrabold text-slate-800 transition truncate">
+                ③ 인건비·장비·폐기물
+              </button>
+              <button type="button" data-scroll-sec="step4CustomCostSection" class="step-nav-scroll-btn py-1.5 px-2 rounded-lg bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-[11px] font-extrabold text-indigo-900 transition truncate">
+                ④ 추가 공사비(자유가격)
+              </button>
+            </div>
+          </div>
+
           <!-- 1. Area (평수 + ㎡ 양방향 + 가로×세로 실측 + 여유분%) Input Card -->
-          <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 sm:p-6">
+          <section id="step1AreaSection" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 sm:p-6">
             <div class="flex flex-wrap items-center justify-between gap-1.5 mb-3 sm:mb-4">
               <div class="flex items-center gap-2">
                 <span id="stepBadge1" class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-emerald-600 text-white text-xs font-bold flex items-center justify-center">1</span>
@@ -411,7 +505,7 @@
           </section>
 
           <!-- 2. Material Costs & Coverage Card (Grouped by Category & Mobile-Optimized) -->
-          <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 sm:p-6">
+          <section id="step2MaterialSection" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 sm:p-6">
             <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
               <div class="flex items-center gap-2">
                 <span id="stepBadge2" class="w-6 h-6 rounded-full bg-emerald-600 text-white text-xs font-bold flex items-center justify-center shrink-0">2</span>
@@ -527,6 +621,38 @@
               </div>
             </div>
 
+            <!-- Epoxy Only: Cleanpoxy Coating / Lining 2mm / Lining 3mm System Selector Toolbar -->
+            <div id="epoxySpecToolbar" class="hidden mb-4 space-y-2.5">
+              <div class="rounded-xl border-2 border-blue-300 bg-blue-50/80 p-3.5 sm:p-4">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 rounded-md bg-blue-700 text-white text-xs font-extrabold">크린폭시 소요량 기준 적용</span>
+                    <h3 class="text-xs sm:text-sm font-extrabold text-blue-950">🔵 에폭시 코팅 vs 라이닝 (2mm / 3mm) 시공 방식 원터치 전환</h3>
+                  </div>
+                  <span id="epoxySystemModeBadge" class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-white text-blue-800 border border-blue-300">
+                    현재: 에폭시 라이닝 2mm 기준 (24kg · 5평/말)
+                  </span>
+                </div>
+                <p class="text-xs text-blue-900 leading-relaxed mb-3">
+                  • <strong>크린폭시 하도 (14L):</strong> 1말당 <strong>약 20평</strong> 시공 (소용량 4L는 5평당 1개)<br/>
+                  • <strong>크린폭시 상도 코팅플러스 (15kg/16kg):</strong> 1말당 <strong>약 20평</strong> 시공 (소용량 4kg은 5평당 1개)<br/>
+                  • <strong>크린폭시 상도 라이닝 (24kg):</strong> <strong>2mm 두께 = 약 5평/말</strong> · <strong>3mm 두께 = 약 3평/말</strong><br/>
+                  • <strong>신나:</strong> 5~30평 4L 1개 · 50평 4L 2개 · 100평 17L 1말
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <button type="button" data-epoxy-mode="coating" class="epoxy-mode-btn py-2 px-3 rounded-lg text-xs font-bold bg-white text-blue-950 border border-blue-300 hover:bg-blue-100 transition">
+                    💧 에폭시 코팅 시공 (상도 15~16kg · 20평/말)
+                  </button>
+                  <button type="button" data-epoxy-mode="lining_2mm" class="epoxy-mode-btn py-2 px-3 rounded-lg text-xs font-extrabold bg-blue-700 text-white shadow-sm transition">
+                    🛡️ 에폭시 라이닝 2mm (24kg · 5평/말)
+                  </button>
+                  <button type="button" data-epoxy-mode="lining_3mm" class="epoxy-mode-btn py-2 px-3 rounded-lg text-xs font-bold bg-white text-blue-950 border border-blue-300 hover:bg-blue-100 transition">
+                    💎 에폭시 라이닝 3mm (24kg · 3평/말)
+                  </button>
+                </div>
+              </div>
+            </div>
+
             <!-- Elastic Coat Only: Coverage Spec & Selection Toolbar -->
             <div id="elasticSpecToolbar" class="hidden mb-4 space-y-3">
               <!-- Coverage Calculation Info Box from Uploaded Spec Table -->
@@ -630,7 +756,7 @@
           </section>
 
           <!-- 3. Labor, Ladder/Sky, Waste & Misc Costs Card -->
-          <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6">
+          <section id="step3LaborSection" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6">
             <div class="flex items-center gap-2.5 mb-4">
               <span id="stepBadge3" class="w-6 h-6 rounded-full bg-emerald-600 text-white text-xs font-bold flex items-center justify-center">3</span>
               <h2 class="text-base sm:text-lg font-bold text-slate-900">인건비 · 사다리/스카이 · 폐기물 · 기타잡비</h2>
@@ -896,7 +1022,307 @@
             </div>
           </section>
 
-          <!-- 4. Elastic Coat Spec Sheet Card (Shown when Elastic Tab is active) -->
+          <!-- 4. NEW: Custom Construction Costs & Free Pricing Card (내 마음대로 공사비 입력 & 공정 순서 정리) -->
+          <section id="step4CustomCostSection" class="bg-white rounded-2xl border-2 border-indigo-200 shadow-sm p-4 sm:p-6 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100">
+              <div class="flex items-center gap-2.5">
+                <span id="stepBadge4" class="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center shrink-0">4</span>
+                <div>
+                  <h2 class="text-sm sm:text-lg font-extrabold text-slate-900">추가 공사비 직접 입력 · 내 마음대로 가격 매기기</h2>
+                  <p class="text-[11px] text-slate-500">현장에 필요한 공사를 자유롭게 적고 원하는 금액을 매기면 공정 순서(①밑작업 → ②본시공 → ③노무·장비 → ④부대·할인)에 맞춰 자동 정리됩니다.</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span id="customCostSubtotalBadge" class="text-xs font-extrabold px-3 py-1 rounded-full bg-indigo-100 text-indigo-900 border border-indigo-300">
+                  추가 공사비 합계: 0원
+                </span>
+              </div>
+            </div>
+
+            <!-- Quick Preset Chips (원터치 자주 쓰는 공사비 추가) -->
+            <div class="rounded-xl bg-slate-50 border border-slate-200 p-3 space-y-2">
+              <div class="flex flex-wrap items-center justify-between gap-1.5">
+                <span class="text-xs font-extrabold text-slate-800">⚡ 자주 쓰는 추가 공사 원터치 등록 <span class="font-normal text-slate-500">(클릭 후 품명·금액 마음대로 수정 가능)</span></span>
+                <div class="flex items-center gap-1">
+                  <button id="btnSortCustomItemsByStage" type="button" class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-extrabold transition shadow-xs" title="공정 순서(①밑작업 → ②본시공 → ③인건비·장비 → ④부대공사)에 맞게 자동 정렬합니다">
+                    ⚡ 공정 순서대로 자동 정렬
+                  </button>
+                  <button id="btnClearAllCustomItems" type="button" class="px-2 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 text-[11px] font-bold transition">
+                    초기화
+                  </button>
+                </div>
+              </div>
+              <div class="flex overflow-x-auto pb-1 sm:pb-0 sm:flex-wrap gap-1.5">
+                <button type="button" data-c-stage="1_prep" data-c-name="고압세척 작업" data-c-spec="옥상/바닥 전체 이물질 고압 물세척" data-c-qty="1" data-c-unit="식" data-c-price="150000" class="quick-custom-preset-btn shrink-0 px-2.5 py-1.5 rounded-lg bg-white hover:bg-indigo-50 text-slate-800 border border-slate-300 text-xs font-bold transition shadow-2xs">
+                  💦 +고압세척 작업 (15만)
+                </button>
+                <button type="button" data-c-stage="1_prep" data-c-name="바닥 면갈이 (그라인딩)" data-c-spec="기존 들뜬 면 제거 및 기계 면갈이" data-c-qty="1" data-c-unit="식" data-c-price="200000" class="quick-custom-preset-btn shrink-0 px-2.5 py-1.5 rounded-lg bg-white hover:bg-indigo-50 text-slate-800 border border-slate-300 text-xs font-bold transition shadow-2xs">
+                  ⚙️ +면갈이·그라인딩 (20만)
+                </button>
+                <button type="button" data-c-stage="1_prep" data-c-name="균열 V컷팅 및 우레탄 실링" data-c-spec="바닥·벽체 크랙 V컷팅 후 실링 보수" data-c-qty="1" data-c-unit="식" data-c-price="150000" class="quick-custom-preset-btn shrink-0 px-2.5 py-1.5 rounded-lg bg-white hover:bg-indigo-50 text-slate-800 border border-slate-300 text-xs font-bold transition shadow-2xs">
+                  🛠️ +균열 V컷팅·실링 (15만)
+                </button>
+                <button type="button" data-c-stage="1_prep" data-c-name="우수관(드레인) 교체 및 보수" data-c-spec="배수구 주변 방수 보강 및 드레인 정리" data-c-qty="2" data-c-unit="개소" data-c-price="50000" class="quick-custom-preset-btn shrink-0 px-2.5 py-1.5 rounded-lg bg-white hover:bg-indigo-50 text-slate-800 border border-slate-300 text-xs font-bold transition shadow-2xs">
+                  🕳️ +우수관 드레인 보수 (5만×2)
+                </button>
+                <button type="button" data-c-stage="2_main" data-c-name="코너 및 파라펫(난간벽) 방수 보강" data-c-spec="옥상 난간벽 및 코너 부위 집중 보강" data-c-qty="1" data-c-unit="식" data-c-price="150000" class="quick-custom-preset-btn shrink-0 px-2.5 py-1.5 rounded-lg bg-white hover:bg-indigo-50 text-slate-800 border border-slate-300 text-xs font-bold transition shadow-2xs">
+                  🧱 +파라펫·코너 보강 (15만)
+                </button>
+                <button type="button" data-c-stage="4_extra" data-c-name="창호·외벽 실리콘 코킹 작업" data-c-spec="누수 취약부 전용 실리콘 코킹 마감" data-c-qty="1" data-c-unit="식" data-c-price="100000" class="quick-custom-preset-btn shrink-0 px-2.5 py-1.5 rounded-lg bg-white hover:bg-indigo-50 text-slate-800 border border-slate-300 text-xs font-bold transition shadow-2xs">
+                  🧴 +실리콘 코킹 작업 (10만)
+                </button>
+                <button type="button" data-c-stage="3_labor_equip" data-c-name="자재 소운반 및 계단 양중비" data-c-spec="엘리베이터 미사용/수작업 자재 운반" data-c-qty="1" data-c-unit="식" data-c-price="100000" class="quick-custom-preset-btn shrink-0 px-2.5 py-1.5 rounded-lg bg-white hover:bg-indigo-50 text-slate-800 border border-slate-300 text-xs font-bold transition shadow-2xs">
+                  🚚 +자재 소운반·양중 (10만)
+                </button>
+                <button type="button" data-c-stage="4_extra" data-c-name="현장 특별 할인 (네고 공제)" data-c-spec="고객 감사 특별 할인 적용" data-c-qty="1" data-c-unit="식" data-c-price="-50000" class="quick-custom-preset-btn shrink-0 px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 text-xs font-bold transition shadow-2xs">
+                  🎁 +특별 할인 (-5만)
+                </button>
+              </div>
+            </div>
+
+            <!-- Direct Custom Item Input Box (내가 필요한 공사비 직접 입력 & 마음대로 가격 책정) -->
+            <div class="rounded-xl bg-indigo-50/70 border-2 border-indigo-200 p-3.5 space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <span class="text-xs font-extrabold text-indigo-950">✍️ 새 공사비 항목 직접 입력 (원하는 공사명과 가격을 자유롭게 입력 후 [추가] 클릭)</span>
+                <button id="btnAddBlankCustomItem" type="button" class="text-[11px] font-extrabold text-indigo-700 bg-white hover:bg-indigo-100 px-2.5 py-1 rounded-lg border border-indigo-300 transition">
+                  + 빈 입력칸 바로 추가
+                </button>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-end">
+                <div class="sm:col-span-3">
+                  <label for="selectQuickCustomStage" class="block text-[11px] font-bold text-slate-700 mb-1">배치할 공정 순서</label>
+                  <select id="selectQuickCustomStage" class="w-full rounded-lg border border-indigo-300 bg-white px-2.5 py-2 text-xs font-extrabold text-slate-900">
+                    <option value="1_prep">① 밑작업·철거·보수 순서</option>
+                    <option value="2_main">② 본시공·추가자재 순서</option>
+                    <option value="3_labor_equip">③ 인건비·장비·할증 순서</option>
+                    <option value="4_extra" selected>④ 부대공사·마감·기타 순서</option>
+                  </select>
+                </div>
+                <div class="sm:col-span-5">
+                  <label for="inputQuickCustomName" class="block text-[11px] font-bold text-slate-700 mb-1">공사 항목명 / 품명 (필수)</label>
+                  <input id="inputQuickCustomName" type="text" placeholder="예: 옥상 물고임 구배보수, 기존 시트 철거 등" class="w-full rounded-lg border border-indigo-300 bg-white px-3 py-2 text-xs font-extrabold text-slate-900" />
+                </div>
+                <div class="sm:col-span-4">
+                  <label for="inputQuickCustomSpec" class="block text-[11px] font-bold text-slate-700 mb-1">규격 / 세부 작업내용 (선택)</label>
+                  <input id="inputQuickCustomSpec" type="text" placeholder="예: 현장 맞춤 시공 1식" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800" />
+                </div>
+
+                <div class="grid grid-cols-2 sm:col-span-4 gap-1.5">
+                  <div>
+                    <label for="inputQuickCustomQty" class="block text-[11px] font-bold text-slate-700 mb-1">수량</label>
+                    <input id="inputQuickCustomQty" type="number" inputmode="decimal" step="0.5" value="1" class="w-full rounded-lg border border-slate-300 bg-white px-2.5 py-2 text-xs font-extrabold text-center text-slate-900" />
+                  </div>
+                  <div>
+                    <label for="inputQuickCustomUnit" class="block text-[11px] font-bold text-slate-700 mb-1">단위</label>
+                    <input id="inputQuickCustomUnit" type="text" value="식" placeholder="식/평/m/개" class="w-full rounded-lg border border-slate-300 bg-white px-2.5 py-2 text-xs font-bold text-center text-slate-900" />
+                  </div>
+                </div>
+
+                <div class="sm:col-span-5">
+                  <label for="inputQuickCustomPrice" class="block text-[11px] font-bold text-indigo-950 mb-1">내가 매기는 단가 / 금액 (원)</label>
+                  <div class="relative flex items-center">
+                    <input id="inputQuickCustomPrice" type="number" inputmode="decimal" step="10000" value="100000" placeholder="원하는 가격 입력" class="w-full rounded-lg border-2 border-indigo-400 bg-white px-3 py-1.5 text-sm font-extrabold text-indigo-950 pr-8" />
+                    <span class="absolute right-2.5 text-xs font-bold text-indigo-500 pointer-events-none">원</span>
+                  </div>
+                </div>
+
+                <div class="sm:col-span-3">
+                  <button id="btnQuickFormAddCustom" type="button" class="w-full py-2.5 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs transition shadow-md flex items-center justify-center gap-1">
+                    <span>➕ 공사비 내역에 추가</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Quick Price Bump Buttons for the Quick Input -->
+              <div class="flex flex-wrap items-center gap-1.5 pt-1">
+                <span class="text-[11px] font-bold text-indigo-900 mr-1">금액 빠른 조절:</span>
+                <button type="button" data-qprice-set="50000" class="quick-custom-price-btn text-[11px] px-2 py-0.5 rounded bg-white border border-indigo-200 text-indigo-800 hover:bg-indigo-100 font-bold">5만원</button>
+                <button type="button" data-qprice-set="100000" class="quick-custom-price-btn text-[11px] px-2 py-0.5 rounded bg-white border border-indigo-200 text-indigo-800 hover:bg-indigo-100 font-bold">10만원</button>
+                <button type="button" data-qprice-set="150000" class="quick-custom-price-btn text-[11px] px-2 py-0.5 rounded bg-white border border-indigo-200 text-indigo-800 hover:bg-indigo-100 font-bold">15만원</button>
+                <button type="button" data-qprice-set="200000" class="quick-custom-price-btn text-[11px] px-2 py-0.5 rounded bg-white border border-indigo-200 text-indigo-800 hover:bg-indigo-100 font-bold">20만원</button>
+                <button type="button" data-qprice-set="300000" class="quick-custom-price-btn text-[11px] px-2 py-0.5 rounded bg-white border border-indigo-200 text-indigo-800 hover:bg-indigo-100 font-bold">30만원</button>
+                <button type="button" data-qprice-set="500000" class="quick-custom-price-btn text-[11px] px-2 py-0.5 rounded bg-white border border-indigo-200 text-indigo-800 hover:bg-indigo-100 font-bold">50만원</button>
+                <button type="button" data-qprice-delta="10000" class="quick-custom-price-btn text-[11px] px-2 py-0.5 rounded bg-indigo-100 border border-indigo-300 text-indigo-950 hover:bg-indigo-200 font-extrabold">+1만</button>
+                <button type="button" data-qprice-delta="50000" class="quick-custom-price-btn text-[11px] px-2 py-0.5 rounded bg-indigo-100 border border-indigo-300 text-indigo-950 hover:bg-indigo-200 font-extrabold">+5만</button>
+                <button type="button" data-qprice-delta="-10000" class="quick-custom-price-btn text-[11px] px-2 py-0.5 rounded bg-rose-50 border border-rose-200 text-rose-800 hover:bg-rose-100 font-bold">-1만</button>
+              </div>
+            </div>
+
+            <!-- Added Custom Items List (Orderable with ▲ / ▼ & Stage Selector) -->
+            <div id="customItemsListContainer" class="space-y-2.5">
+              <!-- Populated dynamically by renderCustomItems() -->
+            </div>
+          </section>
+
+          <!-- 5-A. Epoxy Coating & Lining (2mm/3mm) Coverage Reference Table (Shown when Epoxy Tab is active) -->
+          <section id="epoxySpecTableSection" class="hidden bg-white rounded-2xl border border-blue-200 shadow-sm p-4 sm:p-6 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded-md bg-blue-700 text-white text-xs font-extrabold">에폭시 평당 소요량 기준표</span>
+                <h3 class="text-sm sm:text-base font-extrabold text-slate-900">크린폭시 코팅 · 라이닝(2mm / 3mm) 평수별 소요량 기준표</h3>
+              </div>
+              <span class="text-[11px] font-semibold text-slate-500">※ 바닥 상태 및 사용법에 따라 달라질 수 있습니다</span>
+            </div>
+
+            <div class="rounded-xl bg-blue-50/70 border border-blue-200 p-3 text-xs text-blue-950 grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+              <div>• <strong>크린폭시 하도 (14L):</strong> 약 20평 사용 가능</div>
+              <div>• <strong>크린폭시 상도 코팅플러스 (15kg):</strong> 약 20평 사용 가능</div>
+              <div>• <strong>크린폭시 상도 라이닝 (24kg · 2mm):</strong> 약 5평 사용 가능</div>
+              <div>• <strong>크린폭시 상도 라이닝 (24kg · 3mm):</strong> 약 3평 사용 가능</div>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
+              <table class="w-full text-[11px] sm:text-xs text-left border-collapse">
+                <thead class="bg-slate-100 text-slate-700 font-extrabold border-b border-slate-200">
+                  <tr>
+                    <th class="py-2 px-2.5 border-r border-slate-200">평수</th>
+                    <th class="py-2 px-2.5 border-r border-slate-200">시공 방식</th>
+                    <th class="py-2 px-2.5 border-r border-slate-200">크린폭시 하도</th>
+                    <th class="py-2 px-2.5 border-r border-slate-200">크린폭시 상도 (코팅 / 라이닝)</th>
+                    <th class="py-2 px-2.5">신나</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200 text-slate-700">
+                  <tr>
+                    <td rowspan="3" class="py-2 px-2.5 font-extrabold bg-slate-50 border-r border-slate-200">5평</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">코팅</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">4L 1개</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">4kg 1개</td>
+                    <td class="py-1.5 px-2.5">4L 1개</td>
+                  </tr>
+                  <tr class="bg-blue-50/30">
+                    <td class="py-1.5 px-2.5 font-bold text-blue-900 border-r border-slate-200">라이닝 2mm</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">4L 1개</td>
+                    <td class="py-1.5 px-2.5 font-bold text-blue-900 border-r border-slate-200">24kg 1말</td>
+                    <td class="py-1.5 px-2.5">4L 1개</td>
+                  </tr>
+                  <tr class="bg-indigo-50/40">
+                    <td class="py-1.5 px-2.5 font-bold text-indigo-900 border-r border-slate-200">라이닝 3mm</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">4L 1개</td>
+                    <td class="py-1.5 px-2.5 font-bold text-indigo-900 border-r border-slate-200">24kg 2말</td>
+                    <td class="py-1.5 px-2.5">4L 1개</td>
+                  </tr>
+                  <tr>
+                    <td rowspan="3" class="py-2 px-2.5 font-extrabold bg-slate-50 border-r border-slate-200">10평</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">코팅</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">4L 2개</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">4kg 2개</td>
+                    <td class="py-1.5 px-2.5">4L 1개</td>
+                  </tr>
+                  <tr class="bg-blue-50/30">
+                    <td class="py-1.5 px-2.5 font-bold text-blue-900 border-r border-slate-200">라이닝 2mm</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">4L 2개</td>
+                    <td class="py-1.5 px-2.5 font-bold text-blue-900 border-r border-slate-200">24kg 2말</td>
+                    <td class="py-1.5 px-2.5">4L 1개</td>
+                  </tr>
+                  <tr class="bg-indigo-50/40">
+                    <td class="py-1.5 px-2.5 font-bold text-indigo-900 border-r border-slate-200">라이닝 3mm</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">4L 2개</td>
+                    <td class="py-1.5 px-2.5 font-bold text-indigo-900 border-r border-slate-200">24kg 4말</td>
+                    <td class="py-1.5 px-2.5">4L 1개</td>
+                  </tr>
+                  <tr>
+                    <td rowspan="3" class="py-2 px-2.5 font-extrabold bg-slate-50 border-r border-slate-200">15평</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">코팅</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">14L 1말</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">16kg 1말</td>
+                    <td class="py-1.5 px-2.5">4L 1개</td>
+                  </tr>
+                  <tr class="bg-blue-50/30">
+                    <td class="py-1.5 px-2.5 font-bold text-blue-900 border-r border-slate-200">라이닝 2mm</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">14L 1말</td>
+                    <td class="py-1.5 px-2.5 font-bold text-blue-900 border-r border-slate-200">24kg 3말</td>
+                    <td class="py-1.5 px-2.5">4L 1개</td>
+                  </tr>
+                  <tr class="bg-indigo-50/40">
+                    <td class="py-1.5 px-2.5 font-bold text-indigo-900 border-r border-slate-200">라이닝 3mm</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">14L 1말</td>
+                    <td class="py-1.5 px-2.5 font-bold text-indigo-900 border-r border-slate-200">24kg 5말</td>
+                    <td class="py-1.5 px-2.5">4L 1개</td>
+                  </tr>
+                  <tr>
+                    <td rowspan="3" class="py-2 px-2.5 font-extrabold bg-slate-50 border-r border-slate-200">20평</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">코팅</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">14L 1말</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">16kg 1말</td>
+                    <td class="py-1.5 px-2.5">4L 1개</td>
+                  </tr>
+                  <tr class="bg-blue-50/30">
+                    <td class="py-1.5 px-2.5 font-bold text-blue-900 border-r border-slate-200">라이닝 2mm</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">14L 1말</td>
+                    <td class="py-1.5 px-2.5 font-bold text-blue-900 border-r border-slate-200">24kg 4말</td>
+                    <td class="py-1.5 px-2.5">4L 1개</td>
+                  </tr>
+                  <tr class="bg-indigo-50/40">
+                    <td class="py-1.5 px-2.5 font-bold text-indigo-900 border-r border-slate-200">라이닝 3mm</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">14L 1말</td>
+                    <td class="py-1.5 px-2.5 font-bold text-indigo-900 border-r border-slate-200">24kg 7말</td>
+                    <td class="py-1.5 px-2.5">4L 1개</td>
+                  </tr>
+                  <tr>
+                    <td rowspan="3" class="py-2 px-2.5 font-extrabold bg-slate-50 border-r border-slate-200">30평</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">코팅</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">14L 1말 + 4L 2개</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">16kg 1말 + 4kg 2개</td>
+                    <td class="py-1.5 px-2.5">4L 1개</td>
+                  </tr>
+                  <tr class="bg-blue-50/30">
+                    <td class="py-1.5 px-2.5 font-bold text-blue-900 border-r border-slate-200">라이닝 2mm</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">14L 1말 + 4L 2개</td>
+                    <td class="py-1.5 px-2.5 font-bold text-blue-900 border-r border-slate-200">24kg 6말</td>
+                    <td class="py-1.5 px-2.5">4L 1개</td>
+                  </tr>
+                  <tr class="bg-indigo-50/40">
+                    <td class="py-1.5 px-2.5 font-bold text-indigo-900 border-r border-slate-200">라이닝 3mm</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">14L 1말 + 4L 2개</td>
+                    <td class="py-1.5 px-2.5 font-bold text-indigo-900 border-r border-slate-200">24kg 10말</td>
+                    <td class="py-1.5 px-2.5">4L 1개</td>
+                  </tr>
+                  <tr>
+                    <td rowspan="3" class="py-2 px-2.5 font-extrabold bg-slate-50 border-r border-slate-200">50평</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">코팅</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">14L 2말 + 4L 2개</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">16kg 2말 + 4kg 2개</td>
+                    <td class="py-1.5 px-2.5">4L 2개</td>
+                  </tr>
+                  <tr class="bg-blue-50/30">
+                    <td class="py-1.5 px-2.5 font-bold text-blue-900 border-r border-slate-200">라이닝 2mm</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">14L 2말 + 4L 2개</td>
+                    <td class="py-1.5 px-2.5 font-bold text-blue-900 border-r border-slate-200">24kg 10말</td>
+                    <td class="py-1.5 px-2.5">4L 2개</td>
+                  </tr>
+                  <tr class="bg-indigo-50/40">
+                    <td class="py-1.5 px-2.5 font-bold text-indigo-900 border-r border-slate-200">라이닝 3mm</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">14L 2말 + 4L 2개</td>
+                    <td class="py-1.5 px-2.5 font-bold text-indigo-900 border-r border-slate-200">24kg 17말</td>
+                    <td class="py-1.5 px-2.5">4L 2개</td>
+                  </tr>
+                  <tr>
+                    <td rowspan="3" class="py-2 px-2.5 font-extrabold bg-slate-50 border-r border-slate-200">100평</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">코팅</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">14L 5말</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">16kg 5말</td>
+                    <td class="py-1.5 px-2.5">17L 1말</td>
+                  </tr>
+                  <tr class="bg-blue-50/30">
+                    <td class="py-1.5 px-2.5 font-bold text-blue-900 border-r border-slate-200">라이닝 2mm</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">14L 5말</td>
+                    <td class="py-1.5 px-2.5 font-bold text-blue-900 border-r border-slate-200">24kg 20말</td>
+                    <td class="py-1.5 px-2.5">17L 1말</td>
+                  </tr>
+                  <tr class="bg-indigo-50/40">
+                    <td class="py-1.5 px-2.5 font-bold text-indigo-900 border-r border-slate-200">라이닝 3mm</td>
+                    <td class="py-1.5 px-2.5 border-r border-slate-200">14L 5말</td>
+                    <td class="py-1.5 px-2.5 font-bold text-indigo-900 border-r border-slate-200">24kg 34말</td>
+                    <td class="py-1.5 px-2.5">17L 1말</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- 5. Elastic Coat Spec Sheet Card (Shown when Elastic Tab is active) -->
           <section id="elasticSpecTableSection" class="hidden bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6">
             <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
               <div class="flex items-center gap-2">
@@ -1073,6 +1499,17 @@
                     </div>
                     <span id="summaryMiscCost" class="font-bold text-white">100,000원</span>
                   </div>
+                </div>
+              </div>
+
+              <!-- 3. Custom Construction Items Breakdown (직접 입력 추가 공사비 내역) -->
+              <div id="summaryCustomItemsWrap" class="hidden">
+                <div class="flex items-center justify-between text-xs font-bold text-slate-400 uppercase tracking-wider pb-2 border-b border-slate-800">
+                  <span>3. 직접 입력 추가 공사비 (순서 반영)</span>
+                  <span id="summaryCustomTotalDisplay" class="text-indigo-400 text-sm font-extrabold">0원</span>
+                </div>
+                <div id="summaryCustomItemsList" class="divide-y divide-slate-800/80 mt-1 text-xs sm:text-sm">
+                  <!-- Populated dynamically -->
                 </div>
               </div>
 
@@ -1526,6 +1963,47 @@
             </div>
           </section>
 
+          <!-- Paint Step 3: Custom Construction Costs & Free Pricing (페인트 탭 직접 입력 추가 공사비) -->
+          <section id="paintCustomCostSection" class="bg-white rounded-2xl border-2 border-orange-200 shadow-sm p-4 sm:p-6 space-y-3.5">
+            <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-slate-100">
+              <div class="flex items-center gap-2.5">
+                <span class="w-6 h-6 rounded-full bg-orange-600 text-white text-xs font-bold flex items-center justify-center shrink-0">3</span>
+                <div>
+                  <h2 class="text-sm sm:text-lg font-extrabold text-slate-900">추가 도장·부대 공사비 직접 입력 (자유 가격 책정)</h2>
+                  <p class="text-[11px] text-slate-500">곰팡이 특수코팅, 문짝·몰딩 도장, 벽지제거, 실리콘 코킹 등 필요한 항목과 가격을 마음대로 추가·정리하세요.</p>
+                </div>
+              </div>
+              <span id="paintCustomCostSubtotalBadge" class="text-xs font-extrabold px-3 py-1 rounded-full bg-orange-100 text-orange-900 border border-orange-300">
+                추가 공사비: 0원
+              </span>
+            </div>
+
+            <div class="flex flex-wrap gap-1.5">
+              <button type="button" data-pc-stage="1_prep" data-pc-name="기존 벽지 제거 및 바탕면 샌딩" data-pc-spec="도장 전 벽지 박리 및 면정리" data-pc-qty="1" data-pc-unit="식" data-pc-price="150000" class="paint-custom-preset-btn px-2.5 py-1.5 rounded-lg bg-slate-50 hover:bg-orange-50 text-slate-800 border border-slate-300 text-xs font-bold transition">
+                🧹 +벽지제거·샌딩 (15만)
+              </button>
+              <button type="button" data-pc-stage="1_prep" data-pc-name="결로·곰팡이 방지 특수 케어 코팅" data-pc-spec="발코니/벽체 항균 프라이머 처리" data-pc-qty="1" data-pc-unit="식" data-pc-price="100000" class="paint-custom-preset-btn px-2.5 py-1.5 rounded-lg bg-slate-50 hover:bg-orange-50 text-slate-800 border border-slate-300 text-xs font-bold transition">
+                🛡️ +곰팡이 방지 코팅 (10만)
+              </button>
+              <button type="button" data-pc-stage="2_main" data-pc-name="방문·문틀·몰딩 별도 도장" data-pc-spec="목재/문틀 친환경 수성코팅 도장" data-pc-qty="1" data-pc-unit="식" data-pc-price="150000" class="paint-custom-preset-btn px-2.5 py-1.5 rounded-lg bg-slate-50 hover:bg-orange-50 text-slate-800 border border-slate-300 text-xs font-bold transition">
+                🚪 +문짝·문틀·몰딩 도장 (15만)
+              </button>
+              <button type="button" data-pc-stage="4_extra" data-pc-name="창호·걸레받이 실리콘 코킹 마감" data-pc-spec="도장 라인 정밀 실리콘 작업" data-pc-qty="1" data-pc-unit="식" data-pc-price="100000" class="paint-custom-preset-btn px-2.5 py-1.5 rounded-lg bg-slate-50 hover:bg-orange-50 text-slate-800 border border-slate-300 text-xs font-bold transition">
+                🧴 +실리콘 코킹 마감 (10만)
+              </button>
+              <button type="button" data-pc-stage="4_extra" data-pc-name="현장 특별 할인 (네고 공제)" data-pc-spec="고객 특별 할인" data-pc-qty="1" data-pc-unit="식" data-pc-price="-50000" class="paint-custom-preset-btn px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 text-xs font-bold transition">
+                🎁 +특별 할인 (-5만)
+              </button>
+              <button id="btnAddBlankPaintCustomItem" type="button" class="px-2.5 py-1.5 rounded-lg bg-orange-600 hover:bg-orange-500 text-white text-xs font-extrabold transition ml-auto">
+                ➕ 빈 항목 직접 추가
+              </button>
+            </div>
+
+            <div id="paintCustomItemsListContainer" class="space-y-2.5">
+              <!-- Populated dynamically -->
+            </div>
+          </section>
+
           <!-- Mobile Step-Jump Banner for Paint Tab -->
           <div class="lg:hidden rounded-2xl bg-slate-900 text-white p-3.5 shadow-md border border-slate-800 flex flex-col gap-2.5 no-print">
             <div class="flex items-center justify-between text-xs">
@@ -1658,6 +2136,17 @@
                     </div>
                     <strong id="paintLaborSummaryCost" class="font-bold text-white">600,000원</strong>
                   </div>
+                </div>
+              </div>
+
+              <!-- Paint Custom Items Summary -->
+              <div id="paintSummaryCustomWrap" class="hidden">
+                <div class="flex items-center justify-between text-xs font-bold text-slate-400 uppercase tracking-wider pb-2 border-b border-slate-800">
+                  <span>3. 직접 입력 추가 공사비 내역</span>
+                  <span id="paintSummaryCustomTotalDisplay" class="text-orange-400 text-sm font-extrabold">0원</span>
+                </div>
+                <div id="paintSummaryCustomList" class="divide-y divide-slate-800 mt-1 text-xs">
+                  <!-- Populated dynamically -->
                 </div>
               </div>
 
@@ -1892,7 +2381,7 @@
               </div>
               <div>
                 <label for="inputCustCompanyName" class="block text-[11px] font-semibold text-slate-600 mb-1">시공 업체명 / 연락처</label>
-                <input id="inputCustCompanyName" type="text" value="전문 방수·도장 시공팀" placeholder="예: OO방수 (010-0000-0000)" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-bold text-slate-900" />
+                <input id="inputCustCompanyName" type="text" value="가람상사 (전문 방수·도장 시공팀)" placeholder="예: OO방수 (010-0000-0000)" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-bold text-slate-900" />
               </div>
             </div>
 
@@ -2011,7 +2500,7 @@
                   </p>
                 </div>
                 <div class="text-left sm:text-right text-xs text-slate-300 space-y-0.5">
-                  <div id="custQuoteCompanyDisplay" class="font-extrabold text-white text-xs sm:text-sm">전문 방수·도장 시공팀</div>
+                  <div id="custQuoteCompanyDisplay" class="font-extrabold text-white text-xs sm:text-sm">가람상사 (전문 방수·도장 시공팀)</div>
                   <div id="custQuoteDateDisplay">견적일자: 2026. 10. 21</div>
                   <div id="custQuoteHeaderValidity" class="text-slate-400">견적 유효기간: 견적일로부터 30일간</div>
                 </div>
@@ -2082,15 +2571,21 @@
                   </table>
                 </div>
 
-                <!-- Customer Note Footer -->
-                <div class="rounded-xl bg-slate-50 border border-slate-200 p-3.5 sm:p-4 text-xs text-slate-600 space-y-1">
-                  <div class="font-bold text-slate-800">📌 시공 안내 및 특이사항</div>
-                  <p id="custQuoteNoteDisplay" class="text-slate-600">
-                    정품 자재 규정 도포량 준수 시공 · 바탕정리 및 현장 폐기물 정리 포함
-                  </p>
-                  <p class="text-[11px] text-slate-400">
-                    * 본 견적서는 현장 실측 면적 및 선택 공정을 기준으로 산출된 통합 시공 견적입니다.
-                  </p>
+                <!-- Customer Note Footer + 가람상사 고무인 명판 로고 -->
+                <div class="rounded-xl bg-slate-50 border border-slate-200 p-3.5 sm:p-4 text-xs text-slate-600 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div class="space-y-1 flex-1">
+                    <div class="font-bold text-slate-800">📌 시공 안내 및 특이사항</div>
+                    <p id="custQuoteNoteDisplay" class="text-slate-600">
+                      정품 자재 규정 도포량 준수 시공 · 바탕정리 및 현장 폐기물 정리 포함
+                    </p>
+                    <p class="text-[11px] text-slate-400">
+                      * 본 견적서는 현장 실측 면적 및 선택 공정을 기준으로 산출된 통합 시공 견적입니다.
+                    </p>
+                  </div>
+                  <div class="shrink-0 flex flex-col items-end sm:border-l sm:border-slate-200 sm:pl-4 pt-2 sm:pt-0 border-t border-slate-200/80 sm:border-t-0">
+                    <span class="text-[10px] font-extrabold text-slate-500 mb-1">공급자 · 시공업체 명판</span>
+                    <img id="custQuoteStampImg" src="" alt="가람상사 명판 로고" class="w-44 sm:w-48 max-w-full h-auto object-contain bg-white rounded-lg border border-slate-200 p-1.5 shadow-2xs select-none" />
+                  </div>
                 </div>
 
                 <!-- Customer Quote Action Buttons (Ignored during screenshot capture) -->
@@ -2146,7 +2641,7 @@
                   </p>
                 </div>
                 <div class="text-left sm:text-right text-xs text-slate-300 space-y-0.5">
-                  <div id="detQuoteCompanyDisplay" class="font-extrabold text-white text-xs sm:text-sm">전문 방수·도장 시공팀</div>
+                  <div id="detQuoteCompanyDisplay" class="font-extrabold text-white text-xs sm:text-sm">가람상사 (전문 방수·도장 시공팀)</div>
                   <div id="detQuoteDateDisplay">견적일자: 2026. 10. 21</div>
                   <div id="detQuoteHeaderValidity" class="text-slate-400">견적 유효기간: 견적일로부터 30일간</div>
                 </div>
@@ -2230,15 +2725,21 @@
                   </table>
                 </div>
 
-                <!-- Detailed Quote Footer Note -->
-                <div class="rounded-xl bg-slate-50 border border-slate-200 p-3.5 sm:p-4 text-xs text-slate-600 space-y-1">
-                  <div class="font-bold text-slate-800">📌 시공 안내 및 특이사항</div>
-                  <p id="detQuoteNoteDisplay" class="text-slate-600">
-                    정품 자재 규정 도포량 준수 시공 · 바탕정리 및 현장 폐기물 정리 포함
-                  </p>
-                  <p class="text-[11px] text-slate-400">
-                    * 본 내역서는 현장 면적 기준 소요 물량 및 단가를 산출한 상세 견적서입니다.
-                  </p>
+                <!-- Detailed Quote Footer Note + 가람상사 고무인 명판 로고 -->
+                <div class="rounded-xl bg-slate-50 border border-slate-200 p-3.5 sm:p-4 text-xs text-slate-600 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div class="space-y-1 flex-1">
+                    <div class="font-bold text-slate-800">📌 시공 안내 및 특이사항</div>
+                    <p id="detQuoteNoteDisplay" class="text-slate-600">
+                      정품 자재 규정 도포량 준수 시공 · 바탕정리 및 현장 폐기물 정리 포함
+                    </p>
+                    <p class="text-[11px] text-slate-400">
+                      * 본 내역서는 현장 면적 기준 소요 물량 및 단가를 산출한 상세 견적서입니다.
+                    </p>
+                  </div>
+                  <div class="shrink-0 flex flex-col items-end sm:border-l sm:border-slate-200 sm:pl-4 pt-2 sm:pt-0 border-t border-slate-200/80 sm:border-t-0">
+                    <span class="text-[10px] font-extrabold text-slate-500 mb-1">공급자 · 시공업체 명판</span>
+                    <img id="detQuoteStampImg" src="" alt="가람상사 명판 로고" class="w-44 sm:w-48 max-w-full h-auto object-contain bg-white rounded-lg border border-slate-200 p-1.5 shadow-2xs select-none" />
+                  </div>
                 </div>
 
                 <!-- Detailed Quote Action Buttons -->
@@ -2586,6 +3087,9 @@
           </div>
         </div>
         <div class="flex items-center gap-1 shrink-0">
+          <button id="btnMobileBarSaveQuote" type="button" class="px-2 py-1.5 rounded-lg bg-amber-400 active:bg-amber-500 text-slate-950 text-[11px] font-extrabold shadow flex items-center gap-0.5" title="현재 견적 바로 저장">
+            <span>📥 저장</span>
+          </button>
           <button id="btnMobileCaptureClean" type="button" class="px-2 py-1.5 rounded-lg bg-emerald-600 active:bg-emerald-700 text-white text-[11px] font-extrabold shadow flex items-center gap-0.5">
             <span>📸 통합견적</span>
           </button>
@@ -2613,6 +3117,102 @@
         </button>
         <button type="button" data-mob-step="all" class="mob-step-btn py-1.5 px-1 rounded-lg text-[11px] font-bold text-slate-400 transition truncate">
           ↕️ 전체보기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================== -->
+  <!-- SAVED QUOTES STORAGE MODAL (견적 보관함 — 총 30개 슬롯 지원) -->
+  <!-- ========================================================== -->
+  <div id="quoteStorageModal" class="fixed inset-0 z-50 hidden bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-2.5 sm:p-6 overflow-y-auto no-print">
+    <div class="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] my-auto flex flex-col shadow-2xl border border-slate-300 overflow-hidden">
+      <!-- Modal Header -->
+      <div class="px-4 sm:px-6 py-3.5 sm:py-4 bg-slate-900 text-white flex flex-wrap items-center justify-between gap-3 shrink-0">
+        <div class="flex items-center gap-2.5">
+          <span class="w-9 h-9 rounded-xl bg-amber-400 text-slate-950 flex items-center justify-center text-lg font-extrabold shrink-0">📂</span>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="text-sm sm:text-lg font-extrabold">견적 보관함 (최대 30개 슬롯 영구 저장 · 불러오기)</h3>
+              <span id="modalQuoteCountBadge" class="px-2.5 py-0.5 rounded-full bg-amber-400 text-slate-950 text-xs font-extrabold">0 / 30개 저장됨</span>
+            </div>
+            <p class="text-[11px] sm:text-xs text-slate-300 mt-0.5">최소 20개 이상 넉넉하게 총 30칸의 견적 슬롯을 지원합니다. 저장된 견적을 터치하면 자재·추가공사비·마진·계약서가 즉시 복원됩니다.</p>
+          </div>
+        </div>
+        <button id="btnCloseQuoteStorageModal" type="button" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-extrabold text-slate-200 border border-slate-700">
+          닫기 ✕
+        </button>
+      </div>
+
+      <!-- Modal Save & Filter Control Bar -->
+      <div class="p-3.5 sm:p-5 bg-slate-50 border-b border-slate-200 space-y-3 shrink-0">
+        <!-- Save Current Calculator State to Selected Slot -->
+        <div class="rounded-xl bg-white border-2 border-emerald-300 p-3 sm:p-3.5 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 shadow-2xs">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="px-2 py-1 rounded-lg bg-emerald-600 text-white text-[11px] font-extrabold shrink-0">현재 견적 저장</span>
+            <span id="modalCurrentSummaryPreview" class="text-xs font-bold text-slate-700 truncate">현재 화면의 견적 데이터를 슬롯에 저장합니다.</span>
+          </div>
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-1 sm:max-w-xl">
+            <select id="selectModalTargetSlot" class="rounded-lg border border-slate-300 bg-slate-50 px-2.5 py-2 text-xs font-extrabold text-slate-800 shrink-0">
+              <option value="auto">자동 (비어있는 첫 슬롯에 저장)</option>
+              <!-- Slots #01 ~ #30 populated dynamically -->
+            </select>
+            <input
+              id="inputModalQuoteTitle"
+              type="text"
+              placeholder="견적 이름/메모 입력 (예: 두손빌라 30평 우레탄)"
+              class="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-900"
+            />
+            <button id="btnModalSaveQuote" type="button" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold transition shadow shrink-0">
+              📥 슬롯에 저장하기
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter & Backup Toolbar -->
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex flex-wrap items-center gap-1.5">
+            <button type="button" data-slot-filter="all" class="slot-filter-btn px-3 py-1.5 rounded-lg text-xs font-extrabold bg-slate-900 text-white transition">
+              📋 30개 전체 슬롯 보드 (#01~#30)
+            </button>
+            <button type="button" data-slot-filter="saved" class="slot-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-700 border border-slate-300 hover:bg-slate-100 transition">
+              ✅ 저장된 견적만 보기
+            </button>
+            <input
+              id="inputSearchSavedQuotes"
+              type="text"
+              placeholder="🔍 현장명·고객명·공정 검색..."
+              class="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-bold text-slate-800 w-44 sm:w-56"
+            />
+          </div>
+
+          <div class="flex flex-wrap items-center gap-1.5">
+            <button id="btnExportSavedQuotes" type="button" class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 text-[11px] font-bold transition">
+              📤 견적보관함 백업(.json)
+            </button>
+            <label for="inputImportSavedQuotes" class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 text-[11px] font-bold transition cursor-pointer">
+              📥 백업 불러오기
+            </label>
+            <input id="inputImportSavedQuotes" type="file" accept=".json" class="hidden" />
+            <button id="btnClearAllSavedQuotes" type="button" class="px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-[11px] font-bold transition">
+              🗑️ 보관함 전체 비우기
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 30-Slot Grid Body -->
+      <div class="p-3.5 sm:p-5 overflow-y-auto bg-slate-100 flex-1">
+        <div id="savedQuotesGridContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <!-- Populated dynamically with 30 slots -->
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-4 sm:px-6 py-3 bg-white border-t border-slate-200 flex items-center justify-between text-xs text-slate-500 shrink-0">
+        <span>💡 팁: 각 슬롯의 <strong>[📂 불러오기]</strong>를 누르면 당시 입력한 자재·추가공사비·마진율·계약서 내용이 그대로 복원됩니다.</span>
+        <button id="btnCloseQuoteStorageModalBottom" type="button" class="px-4 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs">
+          닫기
         </button>
       </div>
     </div>
@@ -2662,6 +3262,8 @@
     const STORAGE_KEY_DEFAULTS = 'sigong_calc_custom_defaults_v2';
     const STORAGE_KEY_PIN = 'sigong_calc_admin_pin_v2';
     const STORAGE_KEY_AUTO_UNLOCK = 'sigong_calc_admin_autounlock_v2';
+    const STORAGE_KEY_SAVED_QUOTES = 'sigong_calc_saved_quotes_v1';
+    const MAX_SAVED_QUOTES = 30;
 
     // Factory Default Configuration
     function getFactoryDefaults() {
@@ -2690,6 +3292,7 @@
             wasteCost: 150000,
             miscInclude: true,
             miscCost: 100000,
+            customItems: [],
             materials: [
               {
                 id: 'u_primer',
@@ -2868,55 +3471,56 @@
             wasteCost: 150000,
             miscInclude: true,
             miscCost: 100000,
+            customItems: [],
             materials: [
               {
                 id: 'e_primer',
-                name: '에폭시 하도 (프라이머)',
+                name: '크린폭시 하도 (프라이머)',
                 role: '하도',
-                specUnit: '18L(1말)',
+                specUnit: '14L(1말)',
                 unitPrice: 70000,
-                coveragePerMal: 15,
-                calcMode: 'coverage',
-                manualQty: 2,
-                included: true,
-                note: '기본 뼈대 항목 — 단가·평수를 자유롭게 수정하세요'
-              },
-              {
-                id: 'e_middle',
-                name: '에폭시 중도 / 레진몰탈',
-                role: '중도',
-                specUnit: '20kg(1말)',
-                unitPrice: 80000,
-                coveragePerMal: 5,
-                calcMode: 'coverage',
-                manualQty: 6,
-                included: true,
-                note: '기본 뼈대 항목 — 코팅/라이닝 기준에 맞춰 수정하세요'
-              },
-              {
-                id: 'e_top',
-                name: '에폭시 상도 (마감코팅)',
-                role: '상도',
-                specUnit: '16L(1말)',
-                unitPrice: 90000,
-                coveragePerMal: 15,
-                calcMode: 'coverage',
-                manualQty: 2,
-                included: true,
-                note: '기본 뼈대 항목 — 단가·평수를 자유롭게 수정하세요'
-              },
-              {
-                id: 'e_thinner',
-                name: '에폭시 신나 (희석제)',
-                role: '신나',
-                specUnit: '15L 기준',
-                unitPrice: 55000,
                 coveragePerMal: 20,
                 calcMode: 'coverage',
                 manualQty: 2,
                 included: true,
+                note: '크린폭시 하도 14L 기준 약 20평 사용 가능 (4L 소용량은 5평당 1개)'
+              },
+              {
+                id: 'e_middle',
+                name: '크린폭시 상도 라이닝 (무용제 2mm/3mm)',
+                role: '중도',
+                specUnit: '24kg(1말)',
+                unitPrice: 85000,
+                coveragePerMal: 5,
+                calcMode: 'coverage',
+                manualQty: 6,
+                included: true,
+                note: '크린폭시 상도 라이닝(24kg): 2mm 두께 시공 시 약 5평/말 · 3mm 두께 시공 시 약 3평/말'
+              },
+              {
+                id: 'e_top',
+                name: '크린폭시 상도 코팅플러스 (코팅마감)',
+                role: '상도',
+                specUnit: '16kg(1말)',
+                unitPrice: 90000,
+                coveragePerMal: 20,
+                calcMode: 'coverage',
+                manualQty: 2,
+                included: false,
+                note: '크린폭시 상도 코팅플러스(15~16kg) 약 20평 사용 가능 (4kg 소용량은 5평당 1개)'
+              },
+              {
+                id: 'e_thinner',
+                name: '에폭시 전용 신나 (희석제)',
+                role: '신나',
+                specUnit: '4L/17L 기준',
+                unitPrice: 55000,
+                coveragePerMal: 30,
+                calcMode: 'coverage',
+                manualQty: 1,
+                included: true,
                 isThinner: true,
-                note: '15L/40L 등 기준 변경 가능 — 초기값 저장 시 영구 고정됩니다'
+                note: '5~30평: 4L 1개 / 50평: 4L 2개 / 100평: 17L 1말 기준'
               },
               {
                 id: 'prep_conditioner',
@@ -2995,6 +3599,7 @@
             wasteCost: 150000,
             miscInclude: true,
             miscCost: 100000,
+            customItems: [],
             materials: [
               {
                 id: 'c_ceramic',
@@ -3145,7 +3750,8 @@
           equipInclude: false,
           equipType: '사다리차 (자재 양중)',
           equipCost: 200000,
-          miscCost: 100000
+          miscCost: 100000,
+          customItems: []
         },
         customerQuote: {
           marginPct: 20,
@@ -3154,7 +3760,7 @@
           detailedPriceMode: 'separate_row',
           quoteViewMode: 'both',
           clientName: '고객님 귀하',
-          companyName: '전문 방수·도장 시공팀',
+          companyName: '가람상사 (전문 방수·도장 시공팀)',
           deliveryTermLabel: '납품기한',
           deliveryTerm: '계약일로부터 10일 이내',
           paymentTermLabel: '대금 지불방식',
@@ -3210,6 +3816,7 @@
         }
         if (parsed.paint) {
           merged.paint = Object.assign({}, merged.paint, parsed.paint);
+          if (!Array.isArray(merged.paint.customItems)) merged.paint.customItems = [];
         }
         if (parsed.customerQuote) {
           const defContract = merged.customerQuote.contract;
@@ -3291,6 +3898,7 @@
             if (typeof merged.tabs[k].helperRate === 'undefined') merged.tabs[k].helperRate = 180000;
             if (typeof merged.tabs[k].helperDays === 'undefined') merged.tabs[k].helperDays = 1;
             if (typeof merged.tabs[k].helperWorkers === 'undefined') merged.tabs[k].helperWorkers = 1;
+            if (!Array.isArray(merged.tabs[k].customItems)) merged.tabs[k].customItems = [];
             // Self-heal any materials stuck in calcMode: 'manual' from earlier saves so changing pyeong always recalculates mal
             merged.tabs[k].materials.forEach(m => {
               m.calcMode = 'coverage';
@@ -3783,7 +4391,7 @@
           detailedPriceMode: 'separate_row',
           quoteViewMode: 'both',
           clientName: '고객님 귀하',
-          companyName: '전문 방수·도장 시공팀',
+          companyName: '가람상사 (전문 방수·도장 시공팀)',
           note: '정품 자재 규정 도포량 준수 시공 · 바탕정리 및 현장 폐기물 정리 포함'
         };
       }
@@ -4164,6 +4772,893 @@
         } else {
           btn.className = 'mat-group-filter-btn shrink-0 py-1.5 px-2.5 rounded-lg text-[11px] sm:text-xs font-bold text-slate-300 hover:text-white transition';
         }
+      });
+    }
+
+    // ==========================================================
+    // CUSTOM CONSTRUCTION ITEMS ENGINE (내 마음대로 공사비 추가 · 자유 가격 · 공정 순서 정리)
+    // ==========================================================
+    const STAGE_ORDER_META = {
+      '1_prep': {
+        rank: 1,
+        shortLabel: '① 밑작업·철거',
+        fullLabel: '① 밑작업·철거·보수 공정',
+        badgeClass: 'bg-amber-100 text-amber-900 border-amber-300',
+        scopeBadge: '밑작업·보수'
+      },
+      '2_main': {
+        rank: 2,
+        shortLabel: '② 본시공·자재',
+        fullLabel: '② 본시공·추가자재 공정',
+        badgeClass: 'bg-emerald-100 text-emerald-900 border-emerald-300',
+        scopeBadge: '본시공추가'
+      },
+      '3_labor_equip': {
+        rank: 3,
+        shortLabel: '③ 인건비·장비',
+        fullLabel: '③ 인건비·장비·할증 공정',
+        badgeClass: 'bg-sky-100 text-sky-900 border-sky-300',
+        scopeBadge: '인력·장비'
+      },
+      '4_extra': {
+        rank: 4,
+        shortLabel: '④ 부대·마감·기타',
+        fullLabel: '④ 부대공사·마감·할인 공정',
+        badgeClass: 'bg-indigo-100 text-indigo-900 border-indigo-300',
+        scopeBadge: '추가공정'
+      }
+    };
+
+    function getStageMeta(stageKey) {
+      return STAGE_ORDER_META[stageKey] || STAGE_ORDER_META['4_extra'];
+    }
+
+    function getCustomItemQty(item, areaPyeong) {
+      if (item && item.qtyMode === 'pyeong') {
+        return Math.max(0, Number(areaPyeong) || 0);
+      }
+      return Math.max(0, Number(item && item.qty) || 0);
+    }
+
+    function getCustomItemAmount(item, areaPyeong) {
+      const q = getCustomItemQty(item, areaPyeong);
+      const p = Number(item && item.unitPrice) || 0;
+      return Math.round(q * p);
+    }
+
+    function ensureTabCustomItems(tab) {
+      if (!tab) return [];
+      if (!Array.isArray(tab.customItems)) tab.customItems = [];
+      return tab.customItems;
+    }
+
+    function renderCustomItems() {
+      const tab = getCurrentTabState();
+      const items = ensureTabCustomItems(tab);
+      const container = document.getElementById('customItemsListContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const areaPy = Math.max(0, Number(tab.areaPyeong) || 0);
+
+      if (items.length === 0) {
+        container.innerHTML = `
+          <div class="rounded-xl border border-dashed border-slate-300 bg-slate-50/70 px-4 py-5 text-center text-xs text-slate-500">
+            현재 추가된 직접 입력 공사비가 없습니다. 위 <strong>[자주 쓰는 추가 공사 원터치 등록]</strong> 버튼을 누르거나 <strong>[새 공사비 항목 직접 입력]</strong> 칸에서 원하는 공사명과 금액을 자유롭게 추가해 보세요!
+          </div>
+        `;
+        return;
+      }
+
+      items.forEach((item, idx) => {
+        const isInc = item.included !== false;
+        const stMeta = getStageMeta(item.stageOrder);
+        const effQty = getCustomItemQty(item, areaPy);
+        const amount = getCustomItemAmount(item, areaPy);
+        const unitStr = item.unit || '식';
+        const isDiscount = amount < 0;
+
+        const card = document.createElement('div');
+        card.className = isInc
+          ? `rounded-xl border-2 ${isDiscount ? 'border-rose-200 bg-rose-50/30' : 'border-indigo-200 bg-white'} p-3 sm:p-3.5 shadow-2xs transition`
+          : 'rounded-xl border border-dashed border-slate-300 bg-slate-50/80 p-2.5 sm:p-3 opacity-70 transition';
+
+        card.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+            <div class="flex items-center flex-wrap gap-1.5">
+              <input
+                type="checkbox"
+                data-cidx="${idx}"
+                ${isInc ? 'checked' : ''}
+                class="cust-item-chk w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                title="견적 합산 포함 여부"
+              />
+              <span class="text-[11px] font-extrabold px-2 py-0.5 rounded bg-slate-900 text-amber-300">순서 #${idx + 1}</span>
+              <select
+                data-cidx="${idx}"
+                data-cfield="stageOrder"
+                class="cust-item-input text-[11px] font-extrabold px-2 py-0.5 rounded border ${stMeta.badgeClass} cursor-pointer"
+                title="견적서 내 공정 배치 순서 선택"
+              >
+                <option value="1_prep" ${item.stageOrder === '1_prep' ? 'selected' : ''}>① 밑작업·철거·보수 순서</option>
+                <option value="2_main" ${item.stageOrder === '2_main' ? 'selected' : ''}>② 본시공·추가자재 순서</option>
+                <option value="3_labor_equip" ${item.stageOrder === '3_labor_equip' ? 'selected' : ''}>③ 인건비·장비·할증 순서</option>
+                <option value="4_extra" ${(!item.stageOrder || item.stageOrder === '4_extra') ? 'selected' : ''}>④ 부대공사·마감·기타 순서</option>
+              </select>
+            </div>
+
+            <div class="flex items-center gap-1">
+              <span class="text-xs font-extrabold ${isDiscount ? 'text-rose-700' : 'text-indigo-900'} mr-1.5" id="custItemSub-${idx}">
+                소계: ${formatWon(amount)}원
+              </span>
+              <button type="button" data-cidx="${idx}" data-cmove="-1" ${idx === 0 ? 'disabled' : ''} class="cust-item-move px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-slate-700 text-[11px] font-extrabold border border-slate-300" title="순서 위로 이동">▲</button>
+              <button type="button" data-cidx="${idx}" data-cmove="1" ${idx === items.length - 1 ? 'disabled' : ''} class="cust-item-move px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-slate-700 text-[11px] font-extrabold border border-slate-300" title="순서 아래로 이동">▼</button>
+              <button type="button" data-cidx="${idx}" class="cust-item-del px-2 py-1 rounded bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-700 text-[11px] font-extrabold border border-rose-200 transition" title="항목 삭제">✕ 삭제</button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-12 gap-2 items-end">
+            <div class="col-span-12 sm:col-span-4">
+              <label class="block text-[10px] font-bold text-slate-500 mb-0.5">품명 / 공사 내용</label>
+              <input
+                type="text"
+                data-cidx="${idx}"
+                data-cfield="name"
+                value="${String(item.name || '').replace(/"/g, '&quot;')}"
+                placeholder="공사 항목명 입력"
+                class="cust-item-input w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-extrabold text-slate-900"
+              />
+            </div>
+            <div class="col-span-12 sm:col-span-3">
+              <label class="block text-[10px] font-bold text-slate-500 mb-0.5">규격 / 세부설명</label>
+              <input
+                type="text"
+                data-cidx="${idx}"
+                data-cfield="spec"
+                value="${String(item.spec || '').replace(/"/g, '&quot;')}"
+                placeholder="예: 1식, 현장 맞춤"
+                class="cust-item-input w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700"
+              />
+            </div>
+            <div class="col-span-4 sm:col-span-2">
+              <div class="flex items-center justify-between mb-0.5">
+                <label class="text-[10px] font-bold text-slate-500">수량</label>
+                <button
+                  type="button"
+                  data-cidx="${idx}"
+                  class="cust-item-pymode text-[9px] font-extrabold px-1 py-0.2 rounded ${item.qtyMode === 'pyeong' ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-600 border border-slate-300'}"
+                  title="시공평수(${areaPy}평)와 수량 자동연동 켜기/끄기"
+                >${item.qtyMode === 'pyeong' ? '⚡평수연동' : '수동'}</button>
+              </div>
+              <input
+                type="number"
+                inputmode="decimal"
+                step="0.5"
+                data-cidx="${idx}"
+                data-cfield="qty"
+                value="${effQty}"
+                class="cust-item-input w-full rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-xs font-extrabold text-center text-slate-900"
+              />
+            </div>
+            <div class="col-span-3 sm:col-span-1">
+              <label class="block text-[10px] font-bold text-slate-500 mb-0.5">단위</label>
+              <input
+                type="text"
+                data-cidx="${idx}"
+                data-cfield="unit"
+                value="${String(unitStr).replace(/"/g, '&quot;')}"
+                class="cust-item-input w-full rounded-lg border border-slate-300 bg-white px-1.5 py-1.5 text-xs font-bold text-center text-slate-800"
+              />
+            </div>
+            <div class="col-span-5 sm:col-span-2">
+              <label class="block text-[10px] font-bold text-indigo-900 mb-0.5">단가/가격(원)</label>
+              <input
+                type="number"
+                inputmode="decimal"
+                step="10000"
+                data-cidx="${idx}"
+                data-cfield="unitPrice"
+                value="${Number(item.unitPrice) || 0}"
+                class="cust-item-input w-full rounded-lg border-2 border-indigo-300 bg-white px-2 py-1.5 text-xs font-extrabold text-right text-indigo-950"
+              />
+            </div>
+          </div>
+
+          <div class="mt-2 pt-1.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-1">
+            <span class="text-[10px] text-slate-500">💡 단가를 직접 입력하거나 우측 버튼으로 빠르게 가감하세요:</span>
+            <div class="flex items-center gap-1">
+              <button type="button" data-cidx="${idx}" data-cpdelta="10000" class="cust-item-pstep text-[10px] px-1.5 py-0.5 rounded bg-indigo-50 hover:bg-indigo-100 text-indigo-900 border border-indigo-200 font-bold">+1만</button>
+              <button type="button" data-cidx="${idx}" data-cpdelta="50000" class="cust-item-pstep text-[10px] px-1.5 py-0.5 rounded bg-indigo-50 hover:bg-indigo-100 text-indigo-900 border border-indigo-200 font-bold">+5만</button>
+              <button type="button" data-cidx="${idx}" data-cpdelta="100000" class="cust-item-pstep text-[10px] px-1.5 py-0.5 rounded bg-indigo-50 hover:bg-indigo-100 text-indigo-900 border border-indigo-200 font-bold">+10만</button>
+              <button type="button" data-cidx="${idx}" data-cpdelta="-10000" class="cust-item-pstep text-[10px] px-1.5 py-0.5 rounded bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 font-bold">-1만</button>
+              <button type="button" data-cidx="${idx}" data-cpdelta="-50000" class="cust-item-pstep text-[10px] px-1.5 py-0.5 rounded bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 font-bold">-5만</button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      // Bind listeners
+      container.querySelectorAll('.cust-item-chk').forEach(chk => {
+        chk.addEventListener('change', (e) => {
+          const i = Number(e.target.dataset.cidx);
+          items[i].included = e.target.checked;
+          renderCustomItems();
+          updateCalculationsOnly();
+        });
+      });
+
+      container.querySelectorAll('.cust-item-input').forEach(inp => {
+        const handler = (e) => {
+          const i = Number(e.target.dataset.cidx);
+          const field = e.target.dataset.cfield;
+          if (!items[i]) return;
+          if (field === 'qty') {
+            items[i].qtyMode = 'manual';
+            items[i].qty = Math.max(0, Number(e.target.value) || 0);
+          } else if (field === 'unitPrice') {
+            items[i].unitPrice = Number(e.target.value) || 0;
+          } else {
+            items[i][field] = e.target.value;
+          }
+          if (field === 'stageOrder') {
+            renderCustomItems();
+          } else {
+            const subEl = document.getElementById(`custItemSub-${i}`);
+            if (subEl) {
+              const amt = getCustomItemAmount(items[i], Math.max(0, Number(getCurrentTabState().areaPyeong) || 0));
+              subEl.textContent = `소계: ${formatWon(amt)}원`;
+            }
+          }
+          updateCalculationsOnly();
+        };
+        inp.addEventListener('input', handler);
+        inp.addEventListener('change', handler);
+      });
+
+      container.querySelectorAll('.cust-item-pymode').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const i = Number(e.currentTarget.dataset.cidx);
+          if (!items[i]) return;
+          if (items[i].qtyMode === 'pyeong') {
+            items[i].qtyMode = 'manual';
+            items[i].qty = Math.max(1, Number(getCurrentTabState().areaPyeong) || 1);
+          } else {
+            items[i].qtyMode = 'pyeong';
+            items[i].unit = '평';
+          }
+          renderCustomItems();
+          updateCalculationsOnly();
+        });
+      });
+
+      container.querySelectorAll('.cust-item-pstep').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const i = Number(e.currentTarget.dataset.cidx);
+          const delta = Number(e.currentTarget.dataset.cpdelta) || 0;
+          if (!items[i]) return;
+          items[i].unitPrice = (Number(items[i].unitPrice) || 0) + delta;
+          renderCustomItems();
+          updateCalculationsOnly();
+        });
+      });
+
+      container.querySelectorAll('.cust-item-move').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const i = Number(e.currentTarget.dataset.cidx);
+          const dir = Number(e.currentTarget.dataset.cmove);
+          const targetIdx = i + dir;
+          if (targetIdx < 0 || targetIdx >= items.length) return;
+          const temp = items[i];
+          items[i] = items[targetIdx];
+          items[targetIdx] = temp;
+          renderCustomItems();
+          updateCalculationsOnly();
+        });
+      });
+
+      container.querySelectorAll('.cust-item-del').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const i = Number(e.currentTarget.dataset.cidx);
+          const removed = items.splice(i, 1);
+          renderCustomItems();
+          updateCalculationsOnly();
+          if (removed[0]) showToast(`'${removed[0].name}' 항목이 삭제되었습니다.`);
+        });
+      });
+    }
+
+    function renderPaintCustomItems() {
+      const p = appState.paint;
+      if (!Array.isArray(p.customItems)) p.customItems = [];
+      const items = p.customItems;
+      const container = document.getElementById('paintCustomItemsListContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (items.length === 0) {
+        container.innerHTML = `
+          <div class="rounded-xl border border-dashed border-slate-300 bg-slate-50/70 px-4 py-4 text-center text-xs text-slate-500">
+            추가된 직접 입력 도장·부대 공사비가 없습니다. 위 프리셋 버튼이나 <strong>[➕ 빈 항목 직접 추가]</strong>를 눌러 자유롭게 가격을 매기세요.
+          </div>
+        `;
+        return;
+      }
+
+      items.forEach((item, idx) => {
+        const isInc = item.included !== false;
+        const stMeta = getStageMeta(item.stageOrder);
+        const effQty = Math.max(0, Number(item.qty) || 0);
+        const amount = Math.round(effQty * (Number(item.unitPrice) || 0));
+        const card = document.createElement('div');
+        card.className = isInc
+          ? 'rounded-xl border-2 border-orange-200 bg-white p-3 shadow-2xs space-y-2'
+          : 'rounded-xl border border-dashed border-slate-300 bg-slate-50 p-2.5 opacity-70 space-y-2';
+
+        card.innerHTML = `
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-1.5">
+              <input type="checkbox" data-pcidx="${idx}" ${isInc ? 'checked' : ''} class="pcust-chk w-4 h-4 rounded text-orange-600 cursor-pointer" />
+              <span class="text-[11px] font-extrabold px-2 py-0.5 rounded bg-slate-900 text-amber-300">#${idx + 1}</span>
+              <select data-pcidx="${idx}" data-pcfield="stageOrder" class="pcust-input text-[11px] font-extrabold px-2 py-0.5 rounded border ${stMeta.badgeClass}">
+                <option value="1_prep" ${item.stageOrder === '1_prep' ? 'selected' : ''}>① 밑작업·보양 순서</option>
+                <option value="2_main" ${item.stageOrder === '2_main' ? 'selected' : ''}>② 본도장·추가도장 순서</option>
+                <option value="3_labor_equip" ${item.stageOrder === '3_labor_equip' ? 'selected' : ''}>③ 인건비·장비 순서</option>
+                <option value="4_extra" ${(!item.stageOrder || item.stageOrder === '4_extra') ? 'selected' : ''}>④ 부대·마감·할인 순서</option>
+              </select>
+            </div>
+            <div class="flex items-center gap-1">
+              <strong id="pcustSub-${idx}" class="text-xs font-extrabold text-orange-900 mr-1">소계: ${formatWon(amount)}원</strong>
+              <button type="button" data-pcidx="${idx}" data-pcmove="-1" ${idx === 0 ? 'disabled' : ''} class="pcust-move px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-xs font-bold border border-slate-300">▲</button>
+              <button type="button" data-pcidx="${idx}" data-pcmove="1" ${idx === items.length - 1 ? 'disabled' : ''} class="pcust-move px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-xs font-bold border border-slate-300">▼</button>
+              <button type="button" data-pcidx="${idx}" class="pcust-del px-2 py-0.5 rounded bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-700 text-xs font-bold border border-rose-200">✕</button>
+            </div>
+          </div>
+          <div class="grid grid-cols-12 gap-2 items-end">
+            <div class="col-span-12 sm:col-span-4">
+              <input type="text" data-pcidx="${idx}" data-pcfield="name" value="${String(item.name || '').replace(/"/g, '&quot;')}" placeholder="공사 항목명" class="pcust-input w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs font-extrabold text-slate-900" />
+            </div>
+            <div class="col-span-12 sm:col-span-3">
+              <input type="text" data-pcidx="${idx}" data-pcfield="spec" value="${String(item.spec || '').replace(/"/g, '&quot;')}" placeholder="규격/설명" class="pcust-input w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs text-slate-700" />
+            </div>
+            <div class="col-span-4 sm:col-span-2">
+              <input type="number" step="0.5" data-pcidx="${idx}" data-pcfield="qty" value="${effQty}" class="pcust-input w-full rounded-lg border border-slate-300 px-2 py-1.5 text-xs font-extrabold text-center text-slate-900" />
+            </div>
+            <div class="col-span-3 sm:col-span-1">
+              <input type="text" data-pcidx="${idx}" data-pcfield="unit" value="${String(item.unit || '식').replace(/"/g, '&quot;')}" class="pcust-input w-full rounded-lg border border-slate-300 px-1.5 py-1.5 text-xs font-bold text-center text-slate-800" />
+            </div>
+            <div class="col-span-5 sm:col-span-2">
+              <input type="number" step="10000" data-pcidx="${idx}" data-pcfield="unitPrice" value="${Number(item.unitPrice) || 0}" class="pcust-input w-full rounded-lg border-2 border-orange-300 px-2 py-1.5 text-xs font-extrabold text-right text-slate-900" />
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      container.querySelectorAll('.pcust-chk').forEach(chk => {
+        chk.addEventListener('change', (e) => {
+          const i = Number(e.target.dataset.pcidx);
+          items[i].included = e.target.checked;
+          renderPaintCustomItems();
+          updatePaintCalculations();
+        });
+      });
+
+      container.querySelectorAll('.pcust-input').forEach(inp => {
+        const handler = (e) => {
+          const i = Number(e.target.dataset.pcidx);
+          const f = e.target.dataset.pcfield;
+          if (!items[i]) return;
+          if (f === 'qty') items[i].qty = Math.max(0, Number(e.target.value) || 0);
+          else if (f === 'unitPrice') items[i].unitPrice = Number(e.target.value) || 0;
+          else items[i][f] = e.target.value;
+          const subEl = document.getElementById(`pcustSub-${i}`);
+          if (subEl) {
+            const amt = Math.round((Number(items[i].qty) || 0) * (Number(items[i].unitPrice) || 0));
+            subEl.textContent = `소계: ${formatWon(amt)}원`;
+          }
+          if (f === 'stageOrder') renderPaintCustomItems();
+          updatePaintCalculations();
+        };
+        inp.addEventListener('input', handler);
+        inp.addEventListener('change', handler);
+      });
+
+      container.querySelectorAll('.pcust-move').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const i = Number(e.currentTarget.dataset.pcidx);
+          const dir = Number(e.currentTarget.dataset.pcmove);
+          const targetIdx = i + dir;
+          if (targetIdx < 0 || targetIdx >= items.length) return;
+          const tmp = items[i];
+          items[i] = items[targetIdx];
+          items[targetIdx] = tmp;
+          renderPaintCustomItems();
+          updatePaintCalculations();
+        });
+      });
+
+      container.querySelectorAll('.pcust-del').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const i = Number(e.currentTarget.dataset.pcidx);
+          items.splice(i, 1);
+          renderPaintCustomItems();
+          updatePaintCalculations();
+        });
+      });
+    }
+
+    // ==========================================================
+    // 30-SLOT SAVED QUOTES STORAGE ENGINE (최소 20개 이상 · 총 30칸 견적 보관함)
+    // ==========================================================
+    let currentLoadedQuoteSlot = null; // 0..29 when a slot is loaded
+    let quoteSlotFilterMode = 'all'; // 'all' or 'saved'
+
+    function loadSavedQuotesSlots() {
+      const emptySlots = Array.from({ length: MAX_SAVED_QUOTES }, () => null);
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_SAVED_QUOTES);
+        if (!raw) return emptySlots;
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return emptySlots;
+        for (let i = 0; i < MAX_SAVED_QUOTES; i++) {
+          if (parsed[i] && typeof parsed[i] === 'object' && parsed[i].stateSnapshot) {
+            emptySlots[i] = parsed[i];
+          }
+        }
+        return emptySlots;
+      } catch (e) {
+        return emptySlots;
+      }
+    }
+
+    function saveQuotesSlotsToStorage(slots) {
+      try {
+        localStorage.setItem(STORAGE_KEY_SAVED_QUOTES, JSON.stringify(slots));
+      } catch (e) {
+        showToast('브라우저 저장 공간 문제로 저장에 실패했습니다.');
+      }
+    }
+
+    function buildCurrentQuoteSnapshotMeta(customTitle) {
+      const cq = appState.customerQuote || {};
+      const ctx = lastCustomerQuoteContext || {};
+      const detData = getPreparedDetailedQuoteData();
+      const activeKey = appState.activeTab === 'admin' ? 'urethane' : appState.activeTab;
+
+      const tabBadgeMap = {
+        urethane: { label: '🟢 우레탄 방수', cls: 'bg-emerald-100 text-emerald-900 border-emerald-300' },
+        epoxy: { label: '🔵 에폭시 시공', cls: 'bg-blue-100 text-blue-900 border-blue-300' },
+        elastic: { label: '🟣 탄성코트', cls: 'bg-purple-100 text-purple-900 border-purple-300' },
+        paint: { label: '🟠 페인트 도장', cls: 'bg-orange-100 text-orange-900 border-orange-300' }
+      };
+      const tMeta = tabBadgeMap[activeKey] || tabBadgeMap.urethane;
+
+      const rawClient = (cq.clientName || '').replace(/\s*귀하$/, '').trim();
+      const clientDisp = (rawClient && rawClient !== '고객님') ? rawClient : (cq.contract && cq.contract.clientName ? cq.contract.clientName : '고객님');
+      const areaPy = ctx.areaPyeong || 30;
+      const custTotal = detData.finalTotal || 0;
+      const baseCost = ctx.baseCost || 0;
+
+      const autoTitle = `${clientDisp} · ${tMeta.label.replace(/^[^\s]+\s/, '')} ${areaPy}평 (${formatWon(custTotal)}원)`;
+      const finalTitle = (customTitle && String(customTitle).trim()) ? String(customTitle).trim() : autoTitle;
+
+      const now = new Date();
+      const timeStr = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+      let customCount = 0;
+      if (activeKey === 'paint') {
+        customCount = (appState.paint.customItems || []).filter(c => c.included !== false).length;
+      } else if (appState.tabs[activeKey]) {
+        customCount = (appState.tabs[activeKey].customItems || []).filter(c => c.included !== false).length;
+      }
+
+      const snap = deepClone(appState);
+      if (snap.activeTab === 'admin') snap.activeTab = 'urethane';
+
+      return {
+        id: 'q_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+        title: finalTitle,
+        savedAt: timeStr,
+        activeTab: activeKey,
+        tabLabel: tMeta.label,
+        tabBadgeClass: tMeta.cls,
+        clientName: clientDisp,
+        siteAddress: (cq.contract && cq.contract.siteAddress) || '',
+        areaPyeong: areaPy,
+        areaSqm: ctx.areaSqm || '0',
+        baseCost: baseCost,
+        customerTotal: custTotal,
+        vatTotal: detData.vatTotal || Math.round(custTotal * 1.1),
+        marginPct: cq.marginPct ?? 20,
+        customItemCount: customCount,
+        stateSnapshot: snap
+      };
+    }
+
+    function saveQuoteToSlot(targetSlotIndex, customTitle) {
+      const slots = loadSavedQuotesSlots();
+      let idx = -1;
+      if (targetSlotIndex === 'auto' || targetSlotIndex === null || targetSlotIndex === undefined) {
+        idx = slots.findIndex(s => s === null);
+        if (idx === -1) {
+          // If all 30 slots are full, overwrite slot 29 (last slot)
+          idx = MAX_SAVED_QUOTES - 1;
+        }
+      } else {
+        idx = Math.max(0, Math.min(MAX_SAVED_QUOTES - 1, Number(targetSlotIndex)));
+      }
+
+      const record = buildCurrentQuoteSnapshotMeta(customTitle);
+      record.slotNumber = idx + 1;
+      slots[idx] = record;
+      saveQuotesSlotsToStorage(slots);
+      currentLoadedQuoteSlot = idx;
+
+      refreshQuoteStorageUI();
+      showToast(`📥 [슬롯 #${String(idx + 1).padStart(2, '0')}] '${record.title}' 견적이 저장되었습니다!`);
+    }
+
+    function syncAllFormInputsFromState() {
+      if (appState.customerQuote) {
+        const cq = appState.customerQuote;
+        const setIf = (id, val) => {
+          const el = document.getElementById(id);
+          if (el && val !== undefined && val !== null) el.value = val;
+        };
+        setIf('inputCustomerMarginPct', cq.marginPct ?? 20);
+        setIf('inputCustomerExtraAdjust', cq.extraAdjust ?? 0);
+        const chkRound = document.getElementById('chkCustomerRoundTenThousand');
+        if (chkRound) chkRound.checked = cq.roundTenThousand !== false;
+        setIf('inputCustClientName', cq.clientName || '고객님 귀하');
+        setIf('inputCustCompanyName', cq.companyName || '전문 방수·도장 시공팀');
+        setIf('inputCustDeliveryLabel', cq.deliveryTermLabel || '납품기한');
+        setIf('inputCustDeliveryTerm', cq.deliveryTerm || '계약일로부터 10일 이내');
+        setIf('inputCustPaymentLabel', cq.paymentTermLabel || '대금 지불방식');
+        setIf('inputCustPaymentTerm', cq.paymentTerm || '선수금 50% / 잔금 50% (공사종료후 1일이내)');
+        setIf('inputCustValidityLabel', cq.validityPeriodLabel || '견적 유효기간');
+        setIf('inputCustValidityPeriod', cq.validityPeriod || '견적일로부터 30일간');
+        setIf('inputCustNote', cq.note || '정품 자재 규정 도포량 준수 시공 · 바탕정리 및 현장 폐기물 정리 포함');
+
+        if (cq.contract) {
+          const ct = cq.contract;
+          setIf('inputContractClientName', ct.clientName || '');
+          setIf('inputContractClientPhone', ct.clientPhone ?? '010-8835-8812');
+          setIf('inputContractSignDate', ct.signDate || '');
+          setIf('inputContractProjectName', ct.projectName || '');
+          setIf('inputContractSiteAddress', ct.siteAddress || '인천광역시 석정로329번길 8, 106동');
+          setIf('inputContractPeriodDate', ct.periodDate || '');
+          setIf('inputContractScopeCustom', ct.scopeCustom || '');
+          setIf('inputContractDepositPct', ct.depositPct ?? 50);
+          setIf('inputContractBalanceNote', ct.balanceNote || '공사 준공 완료 후 3일 이내 지급');
+          setIf('inputContractBankAccount', ct.bankAccount || '새마을금고 9003-3120-6412-6 조연주(가람상사)');
+          setIf('inputContractCustomVatTotal', ct.customVatTotal || '');
+          setIf('inputContractWarrantyYears', ct.warrantyYears || '2년');
+          setIf('inputStampBizNo', ct.stampBizNo || '355-30-01702');
+          setIf('inputStampCompany', ct.stampCompany || '가람상사');
+          setIf('inputStampCeo', ct.stampCeo || '조연주');
+          setIf('inputStampAddress', ct.stampAddress || '인천광역시 남동구 주안로 273, 1층 101호');
+          setIf('inputStampBizType', ct.stampBizType || '도소매업          페인트 판매');
+        }
+      }
+    }
+
+    function loadQuoteFromSlot(slotIdx) {
+      const slots = loadSavedQuotesSlots();
+      const item = slots[slotIdx];
+      if (!item || !item.stateSnapshot) {
+        showToast('선택한 슬롯에 저장된 견적이 없습니다.');
+        return;
+      }
+
+      const fac = getFactoryDefaults();
+      const snap = deepClone(item.stateSnapshot);
+      const merged = deepClone(fac);
+
+      merged.activeTab = snap.activeTab || item.activeTab || 'urethane';
+      if (snap.roundingMode) merged.roundingMode = snap.roundingMode;
+      if (snap.tabs) {
+        ['urethane', 'epoxy', 'elastic'].forEach(k => {
+          if (snap.tabs[k]) {
+            merged.tabs[k] = Object.assign({}, merged.tabs[k], snap.tabs[k]);
+            if (!Array.isArray(merged.tabs[k].customItems)) merged.tabs[k].customItems = [];
+          }
+        });
+      }
+      if (snap.paint) {
+        merged.paint = Object.assign({}, merged.paint, snap.paint);
+        if (!Array.isArray(merged.paint.customItems)) merged.paint.customItems = [];
+      }
+      if (snap.customerQuote) {
+        const defCt = merged.customerQuote.contract;
+        merged.customerQuote = Object.assign({}, merged.customerQuote, snap.customerQuote);
+        merged.customerQuote.contract = Object.assign({}, defCt, snap.customerQuote.contract || {});
+      }
+
+      appState = merged;
+      currentLoadedQuoteSlot = slotIdx;
+
+      const quickInput = document.getElementById('inputQuickQuoteTitle');
+      if (quickInput) quickInput.value = item.title || '';
+
+      syncAllFormInputsFromState();
+      syncUIWithActiveTab();
+      refreshQuoteStorageUI();
+
+      const modal = document.getElementById('quoteStorageModal');
+      if (modal) modal.classList.add('hidden');
+
+      showToast(`📂 [슬롯 #${String(slotIdx + 1).padStart(2, '0')}] '${item.title}' 견적을 불러왔습니다!`);
+    }
+
+    function refreshQuoteStorageUI() {
+      const slots = loadSavedQuotesSlots();
+      const savedList = slots.map((s, idx) => ({ item: s, idx })).filter(x => x.item !== null);
+      const savedCount = savedList.length;
+
+      // Update count badges
+      const hBadge = document.getElementById('headerQuoteCountBadge');
+      const mBadge = document.getElementById('mobileHdrQuoteCountBadge');
+      const tBadge = document.getElementById('topBarQuoteCountBadge');
+      const modBadge = document.getElementById('modalQuoteCountBadge');
+      if (hBadge) hBadge.textContent = `${savedCount}/${MAX_SAVED_QUOTES}`;
+      if (mBadge) mBadge.textContent = `${savedCount}/${MAX_SAVED_QUOTES}`;
+      if (tBadge) tBadge.textContent = `${savedCount} / ${MAX_SAVED_QUOTES}개`;
+      if (modBadge) modBadge.textContent = `${savedCount} / ${MAX_SAVED_QUOTES}개 저장됨`;
+
+      // Update active loaded slot indicator & overwrite button
+      const activeInd = document.getElementById('activeLoadedSlotIndicator');
+      const btnOverwrite = document.getElementById('btnUpdateActiveSlotQuote');
+      if (currentLoadedQuoteSlot !== null && slots[currentLoadedQuoteSlot]) {
+        const curSlotObj = slots[currentLoadedQuoteSlot];
+        const sNum = String(currentLoadedQuoteSlot + 1).padStart(2, '0');
+        if (activeInd) {
+          activeInd.innerHTML = `현재 불러온 견적: <strong class="text-amber-300">[슬롯 #${sNum}] ${curSlotObj.title}</strong> (${curSlotObj.savedAt})`;
+        }
+        if (btnOverwrite) {
+          btnOverwrite.classList.remove('hidden');
+          btnOverwrite.classList.add('flex');
+          btnOverwrite.innerHTML = `<span>🔄 슬롯 #${sNum} 덮어쓰기</span>`;
+        }
+      } else {
+        if (activeInd) {
+          activeInd.textContent = '현재 계산 중인 견적(자재·직접입력 공사비·마진·계약서)을 최대 30개 슬롯에 이름 붙여 저장하고 언제든 불러오세요.';
+        }
+        if (btnOverwrite) {
+          btnOverwrite.classList.add('hidden');
+          btnOverwrite.classList.remove('flex');
+        }
+      }
+
+      // Populate top horizontal quick-load pill strip
+      const strip = document.getElementById('quickSavedQuotesStrip');
+      if (strip) {
+        strip.innerHTML = '';
+        if (savedList.length === 0) {
+          strip.innerHTML = `<span class="text-[11px] text-slate-400">아직 저장된 견적이 없습니다. 우측 [📥 현재 견적 저장]을 눌러 첫 견적을 저장해 보세요! (최대 30개 저장 가능)</span>`;
+        } else {
+          savedList.forEach(({ item, idx }) => {
+            const sNum = String(idx + 1).padStart(2, '0');
+            const isCur = currentLoadedQuoteSlot === idx;
+            const pill = document.createElement('button');
+            pill.type = 'button';
+            pill.className = isCur
+              ? 'shrink-0 px-2.5 py-1 rounded-lg bg-amber-400 text-slate-950 text-[11px] font-extrabold shadow flex items-center gap-1.5 transition'
+              : 'shrink-0 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-bold flex items-center gap-1.5 transition';
+            pill.innerHTML = `
+              <span class="px-1 rounded ${isCur ? 'bg-slate-900 text-amber-300' : 'bg-slate-950 text-amber-400'} text-[10px] font-extrabold">#${sNum}</span>
+              <span class="truncate max-w-[180px]">${item.title}</span>
+            `;
+            pill.addEventListener('click', () => loadQuoteFromSlot(idx));
+            strip.appendChild(pill);
+          });
+        }
+      }
+
+      // Populate Modal Slot Selector Dropdown
+      const selSlot = document.getElementById('selectModalTargetSlot');
+      if (selSlot) {
+        const prevVal = selSlot.value || 'auto';
+        selSlot.innerHTML = `<option value="auto">자동 (비어있는 첫 슬롯에 저장)</option>`;
+        for (let i = 0; i < MAX_SAVED_QUOTES; i++) {
+          const sNum = String(i + 1).padStart(2, '0');
+          const existing = slots[i];
+          const opt = document.createElement('option');
+          opt.value = String(i);
+          opt.textContent = existing
+            ? `슬롯 #${sNum} (덮어쓰기: ${existing.title.slice(0, 18)})`
+            : `슬롯 #${sNum} (비어있음 — 새 저장)`;
+          selSlot.appendChild(opt);
+        }
+        selSlot.value = prevVal;
+      }
+
+      // Update Modal Current Summary Preview
+      const modPrev = document.getElementById('modalCurrentSummaryPreview');
+      if (modPrev) {
+        const snapMeta = buildCurrentQuoteSnapshotMeta('');
+        modPrev.textContent = `${snapMeta.tabLabel} · ${snapMeta.areaPyeong}평 · 원가 ${formatWon(snapMeta.baseCost)}원 → 고객견적가 ${formatWon(snapMeta.customerTotal)}원`;
+      }
+
+      // Populate 30-Slot Grid in Modal
+      const grid = document.getElementById('savedQuotesGridContainer');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      const searchQ = (document.getElementById('inputSearchSavedQuotes')?.value || '').trim().toLowerCase();
+
+      document.querySelectorAll('.slot-filter-btn').forEach(btn => {
+        if (btn.dataset.slotFilter === quoteSlotFilterMode) {
+          btn.className = 'slot-filter-btn px-3 py-1.5 rounded-lg text-xs font-extrabold bg-slate-900 text-white transition';
+        } else {
+          btn.className = 'slot-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-700 border border-slate-300 hover:bg-slate-100 transition';
+        }
+      });
+
+      let renderedCount = 0;
+      for (let i = 0; i < MAX_SAVED_QUOTES; i++) {
+        const item = slots[i];
+        const sNum = String(i + 1).padStart(2, '0');
+
+        if (quoteSlotFilterMode === 'saved' && !item) continue;
+        if (searchQ) {
+          if (!item) continue;
+          const hay = `${item.title} ${item.clientName} ${item.siteAddress} ${item.tabLabel}`.toLowerCase();
+          if (!hay.includes(searchQ)) continue;
+        }
+
+        renderedCount++;
+        const card = document.createElement('div');
+
+        if (!item) {
+          // Empty Slot Card
+          card.className = 'rounded-xl border-2 border-dashed border-slate-300 bg-white/70 hover:bg-white hover:border-emerald-400 p-3.5 flex flex-col justify-between gap-3 transition';
+          card.innerHTML = `
+            <div class="flex items-center justify-between">
+              <span class="px-2 py-0.5 rounded-md bg-slate-200 text-slate-700 text-xs font-extrabold">슬롯 #${sNum}</span>
+              <span class="text-[11px] font-semibold text-slate-400">비어있음 (저장 가능)</span>
+            </div>
+            <div class="py-2 text-center">
+              <p class="text-xs font-bold text-slate-500">아직 비어있는 견적 슬롯입니다</p>
+              <p class="text-[11px] text-slate-400 mt-0.5">현재 계산기 화면의 견적을 이 슬롯에 바로 저장할 수 있습니다.</p>
+            </div>
+            <button
+              type="button"
+              data-slot-idx="${i}"
+              class="slot-save-here-btn w-full py-2 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-600 hover:text-white text-emerald-800 border border-emerald-300 text-xs font-extrabold transition"
+            >
+              ➕ 슬롯 #${sNum}에 현재 견적 바로 저장
+            </button>
+          `;
+        } else {
+          // Filled Slot Card
+          const isCur = currentLoadedQuoteSlot === i;
+          card.className = isCur
+            ? 'rounded-xl border-2 border-amber-500 bg-amber-50/40 p-3.5 flex flex-col justify-between gap-3 shadow-md transition'
+            : 'rounded-xl border-2 border-slate-200 bg-white hover:border-slate-400 p-3.5 flex flex-col justify-between gap-3 shadow-xs transition';
+
+          card.innerHTML = `
+            <div class="space-y-2">
+              <div class="flex items-center justify-between gap-1.5">
+                <div class="flex items-center gap-1.5">
+                  <span class="px-2 py-0.5 rounded-md ${isCur ? 'bg-amber-400 text-slate-950' : 'bg-slate-900 text-amber-300'} text-xs font-extrabold">슬롯 #${sNum}</span>
+                  <span class="text-[11px] font-extrabold px-2 py-0.5 rounded border ${item.tabBadgeClass || 'bg-emerald-100 text-emerald-900 border-emerald-300'}">${item.tabLabel || '시공견적'}</span>
+                </div>
+                <span class="text-[10px] font-semibold text-slate-400">${item.savedAt || ''}</span>
+              </div>
+
+              <div>
+                <label class="block text-[10px] font-bold text-slate-400 mb-0.5">저장된 견적 이름/메모 (직접 수정 가능)</label>
+                <input
+                  type="text"
+                  data-slot-idx="${i}"
+                  value="${String(item.title || '').replace(/"/g, '&quot;')}"
+                  class="slot-title-input w-full rounded-lg border border-slate-200 focus:border-slate-800 bg-slate-50/80 focus:bg-white px-2.5 py-1.5 text-xs font-extrabold text-slate-900"
+                />
+              </div>
+
+              <div class="rounded-lg bg-slate-900 text-white p-2.5 space-y-1 text-xs">
+                <div class="flex items-center justify-between text-[11px] text-slate-300">
+                  <span>시공면적: <strong class="text-white">${item.areaPyeong}평 (${item.areaSqm}㎡)</strong></span>
+                  <span>추가공사: <strong class="text-indigo-300">${item.customItemCount || 0}건</strong></span>
+                </div>
+                <div class="flex items-center justify-between text-[11px] text-slate-400">
+                  <span>산출 원가 합계</span>
+                  <span class="font-bold text-slate-200">${formatWon(item.baseCost)}원</span>
+                </div>
+                <div class="pt-1 border-t border-slate-800 flex items-center justify-between">
+                  <span class="text-[11px] font-bold text-amber-300">고객 제시 견적가</span>
+                  <strong class="text-sm font-extrabold text-amber-300">${formatWon(item.customerTotal)}원</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-1.5 pt-1">
+              <button
+                type="button"
+                data-slot-idx="${i}"
+                class="slot-load-btn col-span-2 py-2 px-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-extrabold transition shadow-xs flex items-center justify-center gap-1"
+              >
+                <span>📂 이 견적 불러오기</span>
+              </button>
+              <div class="grid grid-cols-2 gap-1">
+                <button
+                  type="button"
+                  data-slot-idx="${i}"
+                  class="slot-overwrite-btn py-2 px-1.5 rounded-lg bg-slate-100 hover:bg-emerald-600 hover:text-white text-slate-700 border border-slate-300 text-[11px] font-extrabold transition"
+                  title="현재 계산기 상태로 이 슬롯 덮어쓰기"
+                >🔄</button>
+                <button
+                  type="button"
+                  data-slot-idx="${i}"
+                  class="slot-delete-btn py-2 px-1.5 rounded-lg bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-700 border border-rose-200 text-[11px] font-extrabold transition"
+                  title="이 슬롯 비우기(삭제)"
+                >🗑️</button>
+              </div>
+            </div>
+          `;
+        }
+
+        grid.appendChild(card);
+      }
+
+      if (renderedCount === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full rounded-xl bg-white border border-slate-200 p-8 text-center text-xs text-slate-500">
+            조건에 맞는 저장된 견적이 없습니다. 상단 <strong>[📋 30개 전체 슬롯 보드]</strong>를 누르거나 새 견적을 저장해 보세요!
+          </div>
+        `;
+      }
+
+      // Attach grid event listeners
+      grid.querySelectorAll('.slot-save-here-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const idx = Number(e.currentTarget.dataset.slotIdx);
+          const customTitle = document.getElementById('inputModalQuoteTitle')?.value || document.getElementById('inputQuickQuoteTitle')?.value || '';
+          saveQuoteToSlot(idx, customTitle);
+        });
+      });
+
+      grid.querySelectorAll('.slot-load-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const idx = Number(e.currentTarget.dataset.slotIdx);
+          loadQuoteFromSlot(idx);
+        });
+      });
+
+      grid.querySelectorAll('.slot-overwrite-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const idx = Number(e.currentTarget.dataset.slotIdx);
+          const slotsNow = loadSavedQuotesSlots();
+          const keepTitle = slotsNow[idx]?.title || '';
+          saveQuoteToSlot(idx, keepTitle);
+        });
+      });
+
+      grid.querySelectorAll('.slot-delete-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const idx = Number(e.currentTarget.dataset.slotIdx);
+          const slotsNow = loadSavedQuotesSlots();
+          const oldTitle = slotsNow[idx]?.title || `슬롯 #${idx + 1}`;
+          slotsNow[idx] = null;
+          if (currentLoadedQuoteSlot === idx) currentLoadedQuoteSlot = null;
+          saveQuotesSlotsToStorage(slotsNow);
+          refreshQuoteStorageUI();
+          showToast(`🗑️ '${oldTitle}' 슬롯이 비워졌습니다.`);
+        });
+      });
+
+      grid.querySelectorAll('.slot-title-input').forEach(inp => {
+        inp.addEventListener('change', (e) => {
+          const idx = Number(e.target.dataset.slotIdx);
+          const slotsNow = loadSavedQuotesSlots();
+          if (slotsNow[idx]) {
+            slotsNow[idx].title = e.target.value.trim() || `견적 슬롯 #${idx + 1}`;
+            saveQuotesSlotsToStorage(slotsNow);
+            refreshQuoteStorageUI();
+            showToast('견적 이름이 수정되었습니다.');
+          }
+        });
       });
     }
 
@@ -5000,8 +6495,50 @@
         elasticComparisonBox.classList.add('hidden');
       }
 
+      // Custom Construction Items (내 마음대로 추가 공사비) calculation
+      const customItems = ensureTabCustomItems(tab);
+      const activeCustomItems = customItems.filter(c => c && c.included !== false && String(c.name || '').trim() !== '');
+      let customItemsTotal = 0;
+      const summaryCustomWrap = document.getElementById('summaryCustomItemsWrap');
+      const summaryCustomList = document.getElementById('summaryCustomItemsList');
+      const summaryCustomTotalEl = document.getElementById('summaryCustomTotalDisplay');
+      const customBadgeEl = document.getElementById('customCostSubtotalBadge');
+
+      if (summaryCustomList) summaryCustomList.innerHTML = '';
+
+      activeCustomItems.forEach(cItem => {
+        const cQty = getCustomItemQty(cItem, area);
+        const cAmt = getCustomItemAmount(cItem, area);
+        customItemsTotal += cAmt;
+        const stMeta = getStageMeta(cItem.stageOrder);
+        if (summaryCustomList) {
+          const cRow = document.createElement('div');
+          cRow.className = 'py-2 flex items-center justify-between gap-2';
+          cRow.innerHTML = `
+            <div class="min-w-0">
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800 shrink-0">${stMeta.shortLabel}</span>
+                <span class="font-semibold text-slate-100 truncate">${cItem.name}</span>
+              </div>
+              <span class="block text-[11px] text-slate-400 mt-0.5">${cItem.spec ? cItem.spec + ' · ' : ''}${cQty}${cItem.unit || '식'} × ${formatWon(cItem.unitPrice)}원</span>
+            </div>
+            <span class="font-bold ${cAmt < 0 ? 'text-rose-400' : 'text-indigo-300'} shrink-0">${formatWon(cAmt)}원</span>
+          `;
+          summaryCustomList.appendChild(cRow);
+        }
+      });
+
+      if (summaryCustomWrap) {
+        if (activeCustomItems.length > 0) summaryCustomWrap.classList.remove('hidden');
+        else summaryCustomWrap.classList.add('hidden');
+      }
+      if (summaryCustomTotalEl) summaryCustomTotalEl.textContent = `${formatWon(customItemsTotal)}원`;
+      if (customBadgeEl) {
+        customBadgeEl.textContent = `추가 공사비 합계: ${formatWon(customItemsTotal)}원 (${activeCustomItems.length}건)`;
+      }
+
       // Grand Total
-      const grandTotal = materialTotal + extraCombined;
+      const grandTotal = Math.max(0, materialTotal + extraCombined + customItemsTotal);
       const perPyeongCost = area > 0 ? Math.round(grandTotal / area) : 0;
       const grandTotalVat = Math.round(grandTotal * 1.1);
 
@@ -5025,16 +6562,16 @@
       document.getElementById('summaryMiscCost').textContent = tab.miscInclude ? `${formatWon(miscTotal)}원` : '0원 (제외됨)';
       document.getElementById('grandTotalWithVatDisplay').textContent = `${formatWon(grandTotalVat)}원`;
 
-      const matPct = grandTotal > 0 ? Math.round((materialTotal / grandTotal) * 100) : 0;
-      const labPct = grandTotal > 0 ? Math.round((laborTotal / grandTotal) * 100) : 0;
+      const matPct = grandTotal > 0 ? Math.max(0, Math.min(100, Math.round((materialTotal / grandTotal) * 100))) : 0;
+      const labPct = grandTotal > 0 ? Math.max(0, Math.min(100 - matPct, Math.round((laborTotal / grandTotal) * 100))) : 0;
       const extPct = Math.max(0, 100 - matPct - labPct);
 
       document.getElementById('barMaterial').style.width = `${matPct}%`;
       document.getElementById('barLabor').style.width = `${labPct}%`;
       document.getElementById('barExtra').style.width = `${extPct}%`;
-      document.getElementById('ratioTextDisplay').textContent = `자재 ${matPct}% · 인건비 ${labPct}% · 부대비용 ${extPct}%`;
+      document.getElementById('ratioTextDisplay').textContent = `자재 ${matPct}% · 인건비 ${labPct}% · 부대·추가공사 ${extPct}%`;
 
-      // Build clean scope rows for customer quote (NO material quantities, NO unit prices)
+      // Build clean scope rows for customer quote (Ordered by Construction Stage: ①밑작업 -> ②본시공 -> ③인력·장비 -> ④부대·마감)
       const includedMatNames = tab.materials
         .filter(m => m.included !== false)
         .map(m => m.name);
@@ -5056,40 +6593,105 @@
         ? `${baseUrethaneTitle} 및 차열페인트 상도 시공 견적서`
         : `${baseUrethaneTitle} 시공 견적서`;
 
-      const scopeRows = [
-        {
-          category: '1. 바탕면 정리 및 밑작업',
-          desc: '시공면 이물질 제거, 레이턴스/들뜸 정리 및 코너·보양 밑작업 일체',
-          badge: '포함'
-        },
-        {
-          category: '2. 정품 자재 본시공 공정',
-          desc: includedMatNames.length > 0 ? includedMatNames.join(' · ') + ' 규정 도포 시공' : `${tab.title} 정품 자재 도포 시공`,
-          badge: '정품시공'
-        },
-        {
-          category: '3. 전문 인력 및 장비·부자재',
-          desc: `전문 시공팀${tab.helperInclude && helperLaborTotal > 0 ? ` 및 보조인력(${tab.helperWorkers}명)` : ''} 투입 (${tab.laborDays}일 과정) 및 부자재 일체`,
-          badge: '포함'
-        }
-      ];
+      const customPrep = activeCustomItems.filter(c => c.stageOrder === '1_prep');
+      const customMain = activeCustomItems.filter(c => c.stageOrder === '2_main');
+      const customLabor = activeCustomItems.filter(c => c.stageOrder === '3_labor_equip');
+      const customExtra = activeCustomItems.filter(c => !c.stageOrder || c.stageOrder === '4_extra');
+
+      const rawScopeRows = [];
+      // Stage 1: 바탕면 정리 및 밑작업 + custom 1_prep items
+      rawScopeRows.push({
+        rawTitle: '바탕면 정리 및 밑작업',
+        desc: '시공면 이물질 제거, 레이턴스/들뜸 정리 및 코너·보양 밑작업 일체',
+        badge: '포함'
+      });
+      customPrep.forEach(c => {
+        rawScopeRows.push({
+          rawTitle: c.name,
+          desc: c.spec || `${c.name} 맞춤 공정 (${getCustomItemQty(c, area)}${c.unit || '식'})`,
+          badge: getCustomItemAmount(c, area) < 0 ? '할인적용' : '특화밑작업'
+        });
+      });
+
+      // Stage 2: 정품 자재 본시공 공정 + custom 2_main items
+      rawScopeRows.push({
+        rawTitle: '정품 자재 본시공 공정',
+        desc: includedMatNames.length > 0 ? includedMatNames.join(' · ') + ' 규정 도포 시공' : `${tab.title} 정품 자재 도포 시공`,
+        badge: '정품시공'
+      });
+      customMain.forEach(c => {
+        rawScopeRows.push({
+          rawTitle: c.name,
+          desc: c.spec || `${c.name} 본시공 추가 공정 (${getCustomItemQty(c, area)}${c.unit || '식'})`,
+          badge: getCustomItemAmount(c, area) < 0 ? '할인적용' : '본시공추가'
+        });
+      });
+
+      // Stage 3: 전문 인력 및 장비 + custom 3_labor_equip items
+      rawScopeRows.push({
+        rawTitle: '전문 인력 및 장비·부자재',
+        desc: `전문 시공팀${tab.helperInclude && helperLaborTotal > 0 ? ` 및 보조인력(${tab.helperWorkers}명)` : ''} 투입 (${tab.laborDays}일 과정) 및 부자재 일체`,
+        badge: '포함'
+      });
       if (tab.equipInclude && equipTotal > 0) {
-        scopeRows.push({
-          category: '4. 양중 및 고소작업 장비',
+        rawScopeRows.push({
+          rawTitle: '양중 및 고소작업 장비',
           desc: `${equipTypeLabel} 현장 투입 및 안전 작업 일체`,
           badge: '장비포함'
         });
       }
+      customLabor.forEach(c => {
+        rawScopeRows.push({
+          rawTitle: c.name,
+          desc: c.spec || `${c.name} 인력·장비 공정 (${getCustomItemQty(c, area)}${c.unit || '식'})`,
+          badge: getCustomItemAmount(c, area) < 0 ? '할인적용' : '포함'
+        });
+      });
+
+      // Stage 4: custom 4_extra items + 현장 정리 및 폐기물 처리
+      customExtra.forEach(c => {
+        rawScopeRows.push({
+          rawTitle: c.name,
+          desc: c.spec || `${c.name} 부대 시공 (${getCustomItemQty(c, area)}${c.unit || '식'})`,
+          badge: getCustomItemAmount(c, area) < 0 ? '할인적용' : '포함'
+        });
+      });
       if (tab.wasteInclude) {
-        scopeRows.push({
-          category: `${scopeRows.length + 1}. 현장 정리 및 폐기물 처리`,
+        rawScopeRows.push({
+          rawTitle: '현장 정리 및 폐기물 처리',
           desc: '시공 후 발생 폐자재 수거 및 현장 주변 마감 정리',
           badge: '포함'
         });
       }
 
-      // Build itemized rows with quantities & unit prices for Quote Card 2
+      const scopeRows = rawScopeRows.map((r, i) => ({
+        category: `${i + 1}. ${r.rawTitle}`,
+        desc: r.desc,
+        badge: r.badge
+      }));
+
+      // Build itemized rows with quantities & unit prices for Quote Card 2 in strict Construction Stage Order!
       const itemizedRows = [];
+      const toCustomItemizedRow = (c, isMatFlag = false) => {
+        const q = getCustomItemQty(c, area);
+        const amt = getCustomItemAmount(c, area);
+        const u = c.unit || '식';
+        const stMeta = getStageMeta(c.stageOrder);
+        return {
+          name: c.name,
+          spec: c.spec ? `${stMeta.shortLabel} · ${c.spec}` : `${stMeta.fullLabel}`,
+          qtyText: `${q}${u}`,
+          numericQty: q > 0 ? q : 1,
+          unitPrice: Number(c.unitPrice) || 0,
+          amount: amt,
+          isMaterial: isMatFlag
+        };
+      };
+
+      // Stage 1 in Itemized Table: Custom 1_prep items first
+      customPrep.forEach(c => itemizedRows.push(toCustomItemizedRow(c, false)));
+
+      // Stage 2 in Itemized Table: Materials + Custom 2_main items
       tab.materials.forEach(mat => {
         if (mat.included === false) return;
         const qty = calculateMaterialQty(mat, tab, appState.roundingMode);
@@ -5108,7 +6710,9 @@
           isMaterial: true
         });
       });
+      customMain.forEach(c => itemizedRows.push(toCustomItemizedRow(c, true)));
 
+      // Stage 3 in Itemized Table: Labor, Helper, Equipment + Custom 3_labor_equip items
       itemizedRows.push({
         name: '전문 시공 인건비 (기공 노무비)',
         spec: `${tab.laborDays}일 × ${tab.laborWorkers}명 (총 ${manDays.toFixed(1)}품)`,
@@ -5142,6 +6746,10 @@
           isMaterial: false
         });
       }
+      customLabor.forEach(c => itemizedRows.push(toCustomItemizedRow(c, false)));
+
+      // Stage 4 in Itemized Table: Custom 4_extra items + Waste + Misc
+      customExtra.forEach(c => itemizedRows.push(toCustomItemizedRow(c, false)));
 
       if (tab.wasteInclude && wasteTotal > 0) {
         itemizedRows.push({
@@ -5170,7 +6778,7 @@
       lastCustomerQuoteContext = {
         baseCost: grandTotal,
         materialTotal: materialTotal,
-        extraCombined: extraCombined,
+        extraCombined: extraCombined + customItemsTotal,
         totalQtyText: `${Math.round(totalMalCount * 10) / 10}말 (통)`,
         areaPyeong: area,
         areaSqm: sqm,
@@ -5282,7 +6890,40 @@
       const equipCost = p.equipInclude ? Math.round(Number(p.equipCost) || 0) : 0;
       const equipTypeLabel = p.equipType || '사다리차 (자재 양중)';
       const miscCost = Math.round(Number(p.miscCost) || 0);
-      const grandTotal = cost18Only + puttyCost + paintPrepTotal + laborCost + equipCost + miscCost;
+      if (!Array.isArray(p.customItems)) p.customItems = [];
+      const activePaintCustom = p.customItems.filter(c => c && c.included !== false && String(c.name || '').trim() !== '');
+      let paintCustomTotal = 0;
+      const pCustWrap = document.getElementById('paintSummaryCustomWrap');
+      const pCustList = document.getElementById('paintSummaryCustomList');
+      const pCustTotalEl = document.getElementById('paintSummaryCustomTotalDisplay');
+      const pCustBadgeEl = document.getElementById('paintCustomCostSubtotalBadge');
+      if (pCustList) pCustList.innerHTML = '';
+      activePaintCustom.forEach(c => {
+        const cq = Math.max(0, Number(c.qty) || 0);
+        const ca = Math.round(cq * (Number(c.unitPrice) || 0));
+        paintCustomTotal += ca;
+        const stMeta = getStageMeta(c.stageOrder);
+        if (pCustList) {
+          const r = document.createElement('div');
+          r.className = 'py-2 flex items-center justify-between gap-2';
+          r.innerHTML = `
+            <div>
+              <span class="font-semibold text-slate-200">[${stMeta.shortLabel}] ${c.name}</span>
+              <span class="block text-[11px] text-slate-400">${c.spec ? c.spec + ' · ' : ''}${cq}${c.unit || '식'} × ${formatWon(c.unitPrice)}원</span>
+            </div>
+            <strong class="font-bold text-orange-300">${formatWon(ca)}원</strong>
+          `;
+          pCustList.appendChild(r);
+        }
+      });
+      if (pCustWrap) {
+        if (activePaintCustom.length > 0) pCustWrap.classList.remove('hidden');
+        else pCustWrap.classList.add('hidden');
+      }
+      if (pCustTotalEl) pCustTotalEl.textContent = `${formatWon(paintCustomTotal)}원`;
+      if (pCustBadgeEl) pCustBadgeEl.textContent = `추가 공사비: ${formatWon(paintCustomTotal)}원 (${activePaintCustom.length}건)`;
+
+      const grandTotal = Math.max(0, cost18Only + puttyCost + paintPrepTotal + laborCost + equipCost + miscCost + paintCustomTotal);
 
       const phBadge = document.getElementById('paintHelperSubtotalBadge');
       if (phBadge) {
@@ -5469,10 +7110,30 @@
         });
       }
 
+      activePaintCustom.forEach(c => {
+        const cq = Math.max(0, Number(c.qty) || 0);
+        const ca = Math.round(cq * (Number(c.unitPrice) || 0));
+        const stMeta = getStageMeta(c.stageOrder);
+        paintScopeRows.push({
+          category: `${paintScopeRows.length + 1}. ${c.name}`,
+          desc: c.spec || `${c.name} 맞춤 시공 (${cq}${c.unit || '식'})`,
+          badge: ca < 0 ? '할인적용' : '추가공정'
+        });
+        paintItemizedRows.push({
+          name: c.name,
+          spec: c.spec ? `${stMeta.shortLabel} · ${c.spec}` : stMeta.fullLabel,
+          qtyText: `${cq}${c.unit || '식'}`,
+          numericQty: cq > 0 ? cq : 1,
+          unitPrice: Number(c.unitPrice) || 0,
+          amount: ca,
+          isMaterial: c.stageOrder === '2_main'
+        });
+      });
+
       lastCustomerQuoteContext = {
         baseCost: grandTotal,
         materialTotal: cost18Only + puttyCost + paintPrepTotal,
-        extraCombined: laborCost + equipCost + miscCost,
+        extraCombined: laborCost + equipCost + miscCost + paintCustomTotal,
         totalQtyText: `페인트 ${cans18kgOnly}말${p.includePutty ? ` · 퍼티 ${puttyCans25kg}통` : ''}`,
         areaPyeong: paintPy,
         areaSqm: totalPaintArea.toFixed(1),
@@ -5598,6 +7259,7 @@
       syncPrepItem('chkPaintPrepCement', 'paintPrepCementQty', 'paintPrepCementPrice', 'prepCementInclude', 'prepCementQty', 'prepCementPrice', 2, 9000);
       syncPrepItem('chkPaintPrepLeveling', 'paintPrepLevelingQty', 'paintPrepLevelingPrice', 'prepLevelingInclude', 'prepLevelingQty', 'prepLevelingPrice', 5, 22000);
 
+      renderPaintCustomItems();
       updatePaintCalculations();
     }
 
@@ -5838,7 +7500,7 @@
       const brandBadge = document.getElementById('brandBadge');
       const modeStatusBadge = document.getElementById('modeStatusBadge');
 
-      brandBadge.className = 'w-10 h-10 rounded-xl flex items-center justify-center text-white font-extrabold text-lg shadow-sm transition-colors';
+      brandBadge.className = 'w-9 h-9 sm:w-11 sm:h-11 rounded-xl flex flex-col items-center justify-center text-white font-black text-[11px] sm:text-xs leading-tight shadow-sm transition-colors shrink-0 px-1';
       modeStatusBadge.className = 'text-xs font-semibold px-2.5 py-0.5 rounded-full';
 
       if (appState.activeTab === 'paint') {
@@ -5853,9 +7515,14 @@
       }
 
       const customerQuoteSection = document.getElementById('customerQuoteSection');
+      const topQuoteStorageBar = document.getElementById('topQuoteStorageBar');
       if (customerQuoteSection) {
         if (appState.activeTab === 'admin') customerQuoteSection.classList.add('hidden');
         else customerQuoteSection.classList.remove('hidden');
+      }
+      if (topQuoteStorageBar) {
+        if (appState.activeTab === 'admin') topQuoteStorageBar.classList.add('hidden');
+        else topQuoteStorageBar.classList.remove('hidden');
       }
       const mobileStepNavBar = document.getElementById('mobileStepNavBar');
       const mobileFloatingQuickBar = document.getElementById('mobileFloatingQuickBar');
@@ -5888,8 +7555,9 @@
       const stepBadges = [
         document.getElementById('stepBadge1'),
         document.getElementById('stepBadge2'),
-        document.getElementById('stepBadge3')
-      ];
+        document.getElementById('stepBadge3'),
+        document.getElementById('stepBadge4')
+      ].filter(Boolean);
 
       const urethaneHeatOptionToolbar = document.getElementById('urethaneHeatOptionToolbar');
       const elasticSpecToolbar = document.getElementById('elasticSpecToolbar');
@@ -5899,6 +7567,8 @@
 
       if (appState.activeTab === 'urethane') {
         if (urethaneHeatOptionToolbar) urethaneHeatOptionToolbar.classList.remove('hidden');
+        if (document.getElementById('epoxySpecToolbar')) document.getElementById('epoxySpecToolbar').classList.add('hidden');
+        if (document.getElementById('epoxySpecTableSection')) document.getElementById('epoxySpecTableSection').classList.add('hidden');
         syncUrethaneHeatToolbar();
         brandBadge.classList.add('bg-emerald-600');
         modeStatusBadge.classList.add('bg-emerald-100', 'text-emerald-800');
@@ -5914,6 +7584,10 @@
         `;
       } else if (appState.activeTab === 'epoxy') {
         if (urethaneHeatOptionToolbar) urethaneHeatOptionToolbar.classList.add('hidden');
+        const epoxySpecToolbar = document.getElementById('epoxySpecToolbar');
+        const epoxySpecTableSection = document.getElementById('epoxySpecTableSection');
+        if (epoxySpecToolbar) epoxySpecToolbar.classList.remove('hidden');
+        if (epoxySpecTableSection) epoxySpecTableSection.classList.remove('hidden');
         brandBadge.classList.add('bg-blue-600');
         modeStatusBadge.classList.add('bg-blue-100', 'text-blue-800');
         summaryHeaderBg.className = 'bg-gradient-to-br from-blue-600 to-blue-800 p-6';
@@ -5931,6 +7605,8 @@
         modeStatusBadge.classList.add('bg-purple-100', 'text-purple-800');
         summaryHeaderBg.className = 'bg-gradient-to-br from-purple-600 to-purple-800 p-6';
         stepBadges.forEach(b => b.className = 'w-6 h-6 rounded-full bg-purple-600 text-white text-xs font-bold flex items-center justify-center');
+        if (document.getElementById('epoxySpecToolbar')) document.getElementById('epoxySpecToolbar').classList.add('hidden');
+        if (document.getElementById('epoxySpecTableSection')) document.getElementById('epoxySpecTableSection').classList.add('hidden');
         elasticSpecToolbar.classList.remove('hidden');
         elasticSpecTableSection.classList.remove('hidden');
         syncElasticToolbarButtons();
@@ -5997,6 +7673,7 @@
       document.getElementById('inputMiscCost').disabled = !tab.miscInclude;
 
       renderMaterialInputs();
+      renderCustomItems();
       updateCalculationsOnly();
     }
 
@@ -6036,7 +7713,17 @@
       const equipLabel = tab.equipType || '사다리차/스카이차';
       const wasteTotal = tab.wasteInclude ? Math.round(Number(tab.wasteCost) || 0) : 0;
       const miscTotal = tab.miscInclude ? Math.round(Number(tab.miscCost) || 0) : 0;
-      const grandTotal = matTotal + laborTotal + equipTotal + wasteTotal + miscTotal;
+      const activeCustom = ensureTabCustomItems(tab).filter(c => c && c.included !== false && String(c.name || '').trim() !== '');
+      let customLines = [];
+      let customTotal = 0;
+      activeCustom.forEach(c => {
+        const cq = getCustomItemQty(c, area);
+        const ca = getCustomItemAmount(c, area);
+        customTotal += ca;
+        customLines.push(`- [${getStageMeta(c.stageOrder).shortLabel}] ${c.name}${c.spec ? ' (' + c.spec + ')' : ''}: ${cq}${c.unit || '식'} × ${formatWon(c.unitPrice)}원 = ${formatWon(ca)}원`);
+      });
+
+      const grandTotal = Math.max(0, matTotal + laborTotal + equipTotal + wasteTotal + miscTotal + customTotal);
       const perPyeong = area > 0 ? Math.round(grandTotal / area) : 0;
 
       const text = [
@@ -6052,6 +7739,7 @@
         ...(tab.equipInclude && equipTotal > 0 ? [`- ${equipLabel} 장비비: ${formatWon(equipTotal)}원`] : []),
         `- 폐기물 처리비: ${formatWon(wasteTotal)}원`,
         `- 기타잡비(로라/실리콘): ${formatWon(miscTotal)}원`,
+        ...(customLines.length > 0 ? [``, `3. 직접 입력 추가 공사비 (소계: ${formatWon(customTotal)}원)`, ...customLines] : []),
         ``,
         `■ 총 시공 합계: ${formatWon(grandTotal)}원 (VAT 별도)`,
         `■ 평당 시공 단가: 약 ${formatWon(perPyeong)}원/평`
@@ -7254,7 +8942,7 @@
 
         // Pre-measure footer note lines
         mCtx.font = `500 12.5px ${fontStack}`;
-        const noteLines = wrapCanvasText(mCtx, noteText, INNER_W - 40);
+        const noteLines = wrapCanvasText(mCtx, noteText, INNER_W - 220);
         const noteBoxH = Math.max(94, 58 + noteLines.length * 20);
 
         const HEADER_H = 148;
@@ -7468,7 +9156,7 @@
         const termsTableY = tableY + TABLE_TOTAL_H + SECTION_GAP;
         drawContractTermsTableOnCanvas(ctx, INNER_X, termsTableY, INNER_W, cq, fontStack);
 
-        // Customer Note Footer Box
+        // Customer Note Footer Box + 가람상사 고무인 명판 로고
         const footerBoxY = termsTableY + TERMS_TABLE_H + 18;
         drawRoundRect(ctx, INNER_X, footerBoxY, INNER_W, noteBoxH, 14, '#f8fafc', '#e2e8f0', 1.5);
 
@@ -7486,6 +9174,16 @@
         ctx.fillStyle = '#94a3b8';
         ctx.font = `500 11.5px ${fontStack}`;
         ctx.fillText('* 본 견적서는 현장 실측 면적 및 선택 공정을 기준으로 산출된 통합 시공 견적입니다.', INNER_X + 18, footerBoxY + noteBoxH - 18);
+
+        const qStampImg = document.getElementById('contractStampImgEl');
+        if (qStampImg && qStampImg.complete && qStampImg.naturalWidth > 0) {
+          const sW = 165;
+          const sH = Math.round(sW * (qStampImg.naturalHeight / qStampImg.naturalWidth));
+          const sX = INNER_X + INNER_W - sW - 14;
+          const sY = footerBoxY + Math.max(8, Math.round((noteBoxH - sH) / 2));
+          drawRoundRect(ctx, sX - 6, sY - 4, sW + 12, sH + 8, 8, '#ffffff', '#cbd5e1', 1);
+          ctx.drawImage(qStampImg, sX, sY, sW, sH);
+        }
 
         // Outer Card Dark Border
         drawRoundRect(ctx, CARD_X, CARD_Y, CARD_W, CARD_H, 20, null, '#1e293b', 2.5);
@@ -7616,7 +9314,7 @@
         });
 
         mCtx.font = `500 12.5px ${fontStack}`;
-        const noteLines = wrapCanvasText(mCtx, noteText, INNER_W - 40);
+        const noteLines = wrapCanvasText(mCtx, noteText, INNER_W - 220);
         const noteBoxH = Math.max(92, 56 + noteLines.length * 20);
 
         const HEADER_H = 148;
@@ -7879,7 +9577,7 @@
         const termsTableY = tableY + TABLE_TOTAL_H + SECTION_GAP;
         drawContractTermsTableOnCanvas(ctx, INNER_X, termsTableY, INNER_W, cq, fontStack);
 
-        // Footer Note Box
+        // Footer Note Box + 가람상사 고무인 명판 로고
         const footerBoxY = termsTableY + TERMS_TABLE_H + 18;
         drawRoundRect(ctx, INNER_X, footerBoxY, INNER_W, noteBoxH, 14, '#f8fafc', '#e2e8f0', 1.5);
 
@@ -7897,6 +9595,16 @@
         ctx.fillStyle = '#94a3b8';
         ctx.font = `500 11.5px ${fontStack}`;
         ctx.fillText('* 본 내역서는 현장 면적 기준 소요 물량 및 단가를 산출한 상세 견적서입니다.', INNER_X + 18, footerBoxY + noteBoxH - 18);
+
+        const dStampImg = document.getElementById('contractStampImgEl');
+        if (dStampImg && dStampImg.complete && dStampImg.naturalWidth > 0) {
+          const sW = 165;
+          const sH = Math.round(sW * (dStampImg.naturalHeight / dStampImg.naturalWidth));
+          const sX = INNER_X + INNER_W - sW - 14;
+          const sY = footerBoxY + Math.max(8, Math.round((noteBoxH - sH) / 2));
+          drawRoundRect(ctx, sX - 6, sY - 4, sW + 12, sH + 8, 8, '#ffffff', '#cbd5e1', 1);
+          ctx.drawImage(dStampImg, sX, sY, sW, sH);
+        }
 
         // Outer Card Border
         drawRoundRect(ctx, CARD_X, CARD_Y, CARD_W, CARD_H, 20, null, '#1e293b', 2.5);
@@ -8643,8 +10351,362 @@
         window.print();
       });
 
+      // ==========================================================
+      // STEP ORDER NAVIGATOR & CUSTOM CONSTRUCTION COST LISTENERS
+      // ==========================================================
+      document.querySelectorAll('.step-nav-scroll-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const secId = e.currentTarget.dataset.scrollSec;
+          const el = document.getElementById(secId);
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+
+      function addCustomItemToCurrentTab(itemObj) {
+        const tab = getCurrentTabState();
+        const list = ensureTabCustomItems(tab);
+        list.push({
+          id: 'cust_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+          included: true,
+          stageOrder: itemObj.stageOrder || '4_extra',
+          name: itemObj.name || '추가 공사 항목',
+          spec: itemObj.spec || '현장 맞춤 시공',
+          qtyMode: itemObj.qtyMode || 'manual',
+          qty: Number(itemObj.qty) || 1,
+          unit: itemObj.unit || '식',
+          unitPrice: Number(itemObj.unitPrice) || 0
+        });
+        renderCustomItems();
+        updateCalculationsOnly();
+      }
+
+      document.querySelectorAll('.quick-custom-preset-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const d = e.currentTarget.dataset;
+          addCustomItemToCurrentTab({
+            stageOrder: d.cStage || '4_extra',
+            name: d.cName || '추가 공사',
+            spec: d.cSpec || '',
+            qty: Number(d.cQty) || 1,
+            unit: d.cUnit || '식',
+            unitPrice: Number(d.cPrice) || 0
+          });
+          showToast(`➕ '${d.cName}' 항목이 추가되었습니다! 금액과 순서를 자유롭게 조절하세요.`);
+        });
+      });
+
+      document.querySelectorAll('.quick-custom-price-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const inp = document.getElementById('inputQuickCustomPrice');
+          if (!inp) return;
+          if (e.currentTarget.dataset.qpriceSet !== undefined) {
+            inp.value = Number(e.currentTarget.dataset.qpriceSet);
+          } else if (e.currentTarget.dataset.qpriceDelta !== undefined) {
+            inp.value = (Number(inp.value) || 0) + Number(e.currentTarget.dataset.qpriceDelta);
+          }
+        });
+      });
+
+      const handleQuickFormAddCustom = () => {
+        const stageEl = document.getElementById('selectQuickCustomStage');
+        const nameEl = document.getElementById('inputQuickCustomName');
+        const specEl = document.getElementById('inputQuickCustomSpec');
+        const qtyEl = document.getElementById('inputQuickCustomQty');
+        const unitEl = document.getElementById('inputQuickCustomUnit');
+        const priceEl = document.getElementById('inputQuickCustomPrice');
+
+        const rawName = (nameEl?.value || '').trim();
+        const itemName = rawName || '직접 입력 추가 공사';
+        const itemSpec = (specEl?.value || '').trim() || '현장 맞춤 시공';
+        const itemStage = stageEl?.value || '4_extra';
+        const itemQty = Math.max(0.1, Number(qtyEl?.value) || 1);
+        const itemUnit = (unitEl?.value || '').trim() || '식';
+        const itemPrice = Number(priceEl?.value) || 0;
+
+        addCustomItemToCurrentTab({
+          stageOrder: itemStage,
+          name: itemName,
+          spec: itemSpec,
+          qty: itemQty,
+          unit: itemUnit,
+          unitPrice: itemPrice
+        });
+
+        if (nameEl) nameEl.value = '';
+        if (specEl) specEl.value = '';
+        showToast(`➕ '${itemName}' (${formatWon(Math.round(itemQty * itemPrice))}원) 항목이 공사비 내역에 추가되었습니다!`);
+      };
+
+      document.getElementById('btnQuickFormAddCustom').addEventListener('click', handleQuickFormAddCustom);
+      document.getElementById('inputQuickCustomName').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') handleQuickFormAddCustom();
+      });
+      document.getElementById('inputQuickCustomPrice').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') handleQuickFormAddCustom();
+      });
+
+      document.getElementById('btnAddBlankCustomItem').addEventListener('click', () => {
+        const list = ensureTabCustomItems(getCurrentTabState());
+        addCustomItemToCurrentTab({
+          stageOrder: '4_extra',
+          name: `직접 입력 공사 #${list.length + 1}`,
+          spec: '현장 맞춤 시공 1식',
+          qty: 1,
+          unit: '식',
+          unitPrice: 100000
+        });
+        showToast('빈 공사비 항목이 추가되었습니다. 품명과 단가를 원하는 대로 입력하세요!');
+      });
+
+      document.getElementById('btnSortCustomItemsByStage').addEventListener('click', () => {
+        const list = ensureTabCustomItems(getCurrentTabState());
+        if (list.length <= 1) {
+          showToast('정렬할 추가 공사비 항목이 충분하지 않습니다.');
+          return;
+        }
+        list.sort((a, b) => getStageMeta(a.stageOrder).rank - getStageMeta(b.stageOrder).rank);
+        renderCustomItems();
+        updateCalculationsOnly();
+        showToast('⚡ 추가 공사비 항목이 시공 공정 순서(①밑작업 → ②본시공 → ③인건비·장비 → ④부대공사)대로 정렬되었습니다!');
+      });
+
+      document.getElementById('btnClearAllCustomItems').addEventListener('click', () => {
+        const tab = getCurrentTabState();
+        tab.customItems = [];
+        renderCustomItems();
+        updateCalculationsOnly();
+        showToast('추가 공사비 내역이 초기화되었습니다.');
+      });
+
+      // Paint Tab Custom Items Listeners
+      document.querySelectorAll('.paint-custom-preset-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const d = e.currentTarget.dataset;
+          if (!Array.isArray(appState.paint.customItems)) appState.paint.customItems = [];
+          appState.paint.customItems.push({
+            id: 'pcust_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+            included: true,
+            stageOrder: d.pcStage || '4_extra',
+            name: d.pcName || '추가 도장 공사',
+            spec: d.pcSpec || '',
+            qty: Number(d.pcQty) || 1,
+            unit: d.pcUnit || '식',
+            unitPrice: Number(d.pcPrice) || 0
+          });
+          renderPaintCustomItems();
+          updatePaintCalculations();
+          showToast(`➕ '${d.pcName}' 항목이 페인트 견적에 추가되었습니다!`);
+        });
+      });
+
+      document.getElementById('btnAddBlankPaintCustomItem').addEventListener('click', () => {
+        if (!Array.isArray(appState.paint.customItems)) appState.paint.customItems = [];
+        appState.paint.customItems.push({
+          id: 'pcust_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+          included: true,
+          stageOrder: '4_extra',
+          name: `추가 도장·부대공사 #${appState.paint.customItems.length + 1}`,
+          spec: '현장 맞춤 시공',
+          qty: 1,
+          unit: '식',
+          unitPrice: 100000
+        });
+        renderPaintCustomItems();
+        updatePaintCalculations();
+        showToast('페인트 추가 공사비 항목이 생성되었습니다.');
+      });
+
+      // ==========================================================
+      // 30-SLOT QUOTE STORAGE MODAL & QUICK SAVE LISTENERS
+      // ==========================================================
+      const openQuoteStorageModal = () => {
+        refreshQuoteStorageUI();
+        const qInput = document.getElementById('inputQuickQuoteTitle');
+        const mInput = document.getElementById('inputModalQuoteTitle');
+        if (qInput && mInput && qInput.value.trim() && !mInput.value.trim()) {
+          mInput.value = qInput.value.trim();
+        }
+        const modal = document.getElementById('quoteStorageModal');
+        if (modal) modal.classList.remove('hidden');
+      };
+
+      const closeQuoteStorageModal = () => {
+        const modal = document.getElementById('quoteStorageModal');
+        if (modal) modal.classList.add('hidden');
+      };
+
+      document.getElementById('btnOpenQuoteStorageModal').addEventListener('click', openQuoteStorageModal);
+      document.getElementById('btnHeaderOpenQuoteStorage').addEventListener('click', openQuoteStorageModal);
+      document.getElementById('btnMobileOpenQuoteStorage').addEventListener('click', openQuoteStorageModal);
+      document.getElementById('btnCloseQuoteStorageModal').addEventListener('click', closeQuoteStorageModal);
+      document.getElementById('btnCloseQuoteStorageModalBottom').addEventListener('click', closeQuoteStorageModal);
+
+      document.getElementById('btnQuickSaveQuoteNow').addEventListener('click', () => {
+        const titleVal = document.getElementById('inputQuickQuoteTitle')?.value || '';
+        saveQuoteToSlot('auto', titleVal);
+      });
+
+      document.getElementById('btnMobileBarSaveQuote').addEventListener('click', () => {
+        const titleVal = document.getElementById('inputQuickQuoteTitle')?.value || '';
+        saveQuoteToSlot('auto', titleVal);
+      });
+
+      document.getElementById('btnUpdateActiveSlotQuote').addEventListener('click', () => {
+        if (currentLoadedQuoteSlot === null) return;
+        const titleVal = document.getElementById('inputQuickQuoteTitle')?.value || '';
+        saveQuoteToSlot(currentLoadedQuoteSlot, titleVal);
+      });
+
+      document.getElementById('btnModalSaveQuote').addEventListener('click', () => {
+        const selVal = document.getElementById('selectModalTargetSlot')?.value || 'auto';
+        const titleVal = document.getElementById('inputModalQuoteTitle')?.value || document.getElementById('inputQuickQuoteTitle')?.value || '';
+        saveQuoteToSlot(selVal === 'auto' ? 'auto' : Number(selVal), titleVal);
+      });
+
+      document.querySelectorAll('.slot-filter-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          quoteSlotFilterMode = e.currentTarget.dataset.slotFilter || 'all';
+          refreshQuoteStorageUI();
+        });
+      });
+
+      document.getElementById('inputSearchSavedQuotes').addEventListener('input', () => {
+        refreshQuoteStorageUI();
+      });
+
+      document.getElementById('btnExportSavedQuotes').addEventListener('click', () => {
+        const slots = loadSavedQuotesSlots();
+        const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(slots, null, 2));
+        const a = document.createElement('a');
+        a.setAttribute('href', dataStr);
+        a.setAttribute('download', 'sigong_saved_quotes_30slots.json');
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        showToast('📤 저장된 견적 보관함 백업 파일(sigong_saved_quotes_30slots.json)이 다운로드되었습니다.');
+      });
+
+      document.getElementById('inputImportSavedQuotes').addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          try {
+            const imported = JSON.parse(evt.target.result);
+            if (Array.isArray(imported)) {
+              const slots = Array.from({ length: MAX_SAVED_QUOTES }, (_, i) => imported[i] || null);
+              saveQuotesSlotsToStorage(slots);
+              refreshQuoteStorageUI();
+              showToast('📥 백업 파일에서 저장된 견적 목록을 성공적으로 불러왔습니다!');
+            } else {
+              showToast('올바른 견적 보관함 백업 파일이 아닙니다.');
+            }
+          } catch (err) {
+            showToast('파일을 읽는 중 오류가 발생했습니다.');
+          }
+        };
+        reader.readAsText(file);
+      });
+
+      document.getElementById('btnClearAllSavedQuotes').addEventListener('click', () => {
+        const emptySlots = Array.from({ length: MAX_SAVED_QUOTES }, () => null);
+        saveQuotesSlotsToStorage(emptySlots);
+        currentLoadedQuoteSlot = null;
+        refreshQuoteStorageUI();
+        showToast('🗑️ 견적 보관함의 모든 슬롯이 비워졌습니다.');
+      });
+
+      // Sync 가람상사 고무인 명판 로고 across Header, Quote Card 1, and Quote Card 2
+      const masterStampImg = document.getElementById('contractStampImgEl');
+      if (masterStampImg && masterStampImg.src) {
+        ['headerGaramStampPreview', 'custQuoteStampImg', 'detQuoteStampImg'].forEach(imgId => {
+          const targetImg = document.getElementById(imgId);
+          if (targetImg) targetImg.src = masterStampImg.src;
+        });
+      }
+      if (appState.customerQuote && appState.customerQuote.companyName === '전문 방수·도장 시공팀') {
+        appState.customerQuote.companyName = '가람상사 (전문 방수·도장 시공팀)';
+        const compInp = document.getElementById('inputCustCompanyName');
+        if (compInp) compInp.value = appState.customerQuote.companyName;
+      }
+
+      // Epoxy Mode Preset Buttons (코팅 / 라이닝 2mm / 라이닝 3mm — 크린폭시 기준표 연동)
+      document.querySelectorAll('.epoxy-mode-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const mode = e.currentTarget.dataset.epoxyMode;
+          const eTab = appState.tabs.epoxy;
+          const primer = eTab.materials.find(m => m.id === 'e_primer');
+          const middle = eTab.materials.find(m => m.id === 'e_middle');
+          const top = eTab.materials.find(m => m.id === 'e_top');
+          const thinner = eTab.materials.find(m => m.id === 'e_thinner');
+          const badge = document.getElementById('epoxySystemModeBadge');
+
+          if (primer) {
+            primer.name = '크린폭시 하도 (프라이머)';
+            primer.specUnit = '14L(1말)';
+            primer.coveragePerMal = 20;
+            primer.calcMode = 'coverage';
+            primer.included = true;
+          }
+          if (thinner) {
+            thinner.specUnit = '4L/17L 기준';
+            thinner.coveragePerMal = 30;
+            thinner.calcMode = 'coverage';
+            thinner.included = true;
+          }
+
+          if (mode === 'coating') {
+            if (middle) middle.included = false;
+            if (top) {
+              top.name = '크린폭시 상도 코팅플러스 (코팅마감)';
+              top.specUnit = '16kg(1말)';
+              top.coveragePerMal = 20;
+              top.calcMode = 'coverage';
+              top.included = true;
+            }
+            if (badge) badge.textContent = '현재: 에폭시 코팅 기준 (하도 14L·20평 / 상도 16kg·20평)';
+            showToast('💧 크린폭시 코팅 시공 기준(하도 20평/말 · 코팅상도 20평/말)이 적용되었습니다.');
+          } else if (mode === 'lining_2mm') {
+            if (middle) {
+              middle.name = '크린폭시 상도 라이닝 2mm';
+              middle.specUnit = '24kg(1말)';
+              middle.coveragePerMal = 5;
+              middle.calcMode = 'coverage';
+              middle.included = true;
+            }
+            if (top) top.included = false;
+            if (badge) badge.textContent = '현재: 에폭시 라이닝 2mm 기준 (24kg · 5평/말)';
+            showToast('🛡️ 크린폭시 라이닝 2mm 기준(24kg 1말당 5평 시공)이 적용되었습니다.');
+          } else if (mode === 'lining_3mm') {
+            if (middle) {
+              middle.name = '크린폭시 상도 라이닝 3mm';
+              middle.specUnit = '24kg(1말)';
+              middle.coveragePerMal = 3;
+              middle.calcMode = 'coverage';
+              middle.included = true;
+            }
+            if (top) top.included = false;
+            if (badge) badge.textContent = '현재: 에폭시 라이닝 3mm 기준 (24kg · 3평/말)';
+            showToast('💎 크린폭시 라이닝 3mm 기준(24kg 1말당 3평 시공)이 적용되었습니다.');
+          }
+
+          document.querySelectorAll('.epoxy-mode-btn').forEach(b => {
+            if (b.dataset.epoxyMode === mode) {
+              b.className = 'epoxy-mode-btn py-2 px-3 rounded-lg text-xs font-extrabold bg-blue-700 text-white shadow-sm transition';
+            } else {
+              b.className = 'epoxy-mode-btn py-2 px-3 rounded-lg text-xs font-bold bg-white text-blue-950 border border-blue-300 hover:bg-blue-100 transition';
+            }
+          });
+
+          renderMaterialInputs();
+          updateCalculationsOnly();
+        });
+      });
+
       // Initial render
+      setMobileStepMode('all', false);
       syncUIWithActiveTab();
+      refreshQuoteStorageUI();
     });
   </script>
 </body>
