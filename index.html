@@ -749,7 +749,7 @@
                   </div>
                 </div>
 
-                <!-- 2. 에폭시 상·중도 시공 방식 선택: 코팅 vs 라이닝 2mm vs 라이닝 3mm -->
+                <!-- 2. 에폭시 코팅 / 라이닝 시공 방식 선택: 코팅 vs 라이닝 2mm vs 라이닝 3mm -->
                 <div class="pt-1">
                   <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
                     <div class="flex items-center gap-2">
@@ -2720,7 +2720,7 @@
                       <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
                         <tr>
                           <th class="py-2 px-2 sm:py-2.5 sm:px-3 w-[40%] sm:w-auto">품명 및 공정</th>
-                          <th class="hidden sm:table-cell py-2.5 px-2.5">규격 / 산출기준</th>
+                          <th class="hidden sm:table-cell py-2.5 px-2.5">규격 / 단위</th>
                           <th class="py-2 px-1 sm:py-2.5 sm:px-2.5 text-center w-[15%] sm:w-20">수량</th>
                           <th class="py-2 px-1.5 sm:py-2.5 sm:px-2.5 text-right w-[21%] sm:w-24">단가</th>
                           <th class="py-2 px-2 sm:py-2.5 sm:px-3 text-right w-[24%] sm:w-28">합계금액</th>
@@ -3485,7 +3485,7 @@
             badgeText: '에폭시 기본 뼈대 (단가 조정 가능)',
             themeColor: 'blue',
             isSkeleton: true,
-            skeletonDesc: '에폭시 바닥 시공용 기본 뼈대입니다. 하도·중도(또는 퍼티/라이닝)·상도·신나 단가와 1말당 평수를 수정한 뒤 상단 [현재 설정을 초기값으로 저장]을 누르면 고정됩니다.',
+            skeletonDesc: '에폭시 바닥 시공용 기본 설정입니다. 프라이머(일반/만능)·에폭시 라이닝·상도 코팅·신나 단가와 1말당 평수를 수정한 뒤 상단 [현재 설정을 초기값으로 저장]을 누르면 고정됩니다.',
             areaPyeong: 30,
             lossPercent: 0,
             laborRate: 250000,
@@ -3530,15 +3530,15 @@
               },
               {
                 id: 'e_middle',
-                name: '크린폭시 상도 라이닝 (무용제 2mm/3mm)',
-                role: '중도',
+                name: '에폭시 라이닝',
+                role: '라이닝',
                 specUnit: '24kg(1말)',
                 unitPrice: 85000,
                 coveragePerMal: 5,
                 calcMode: 'coverage',
                 manualQty: 6,
                 included: true,
-                note: '크린폭시 상도 라이닝(24kg): 2mm 두께 시공 시 약 5평/말 · 3mm 두께 시공 시 약 3평/말'
+                note: '에폭시 라이닝(24kg 무용제): 2mm 두께 시공 시 약 5평/말 · 3mm 두께 시공 시 약 3평/말'
               },
               {
                 id: 'e_top',
@@ -3924,7 +3924,7 @@
           };
           merged.tabs.urethane.materials.sort((a, b) => (orderRank[a.id] || 99) - (orderRank[b.id] || 99));
         }
-        // Migrate e_uni_primer (에폭시 만능 프라이머) & sort epoxy materials cleanly
+        // Migrate e_uni_primer (에폭시 만능 프라이머), rename 에폭시 중도 -> 에폭시 라이닝 & sort epoxy materials cleanly
         if (merged.tabs && merged.tabs.epoxy && Array.isArray(merged.tabs.epoxy.materials)) {
           const stdPrimer = merged.tabs.epoxy.materials.find(m => m.id === 'e_primer');
           if (stdPrimer) {
@@ -3932,6 +3932,13 @@
               stdPrimer.name = '크린폭시 일반 프라이머 (일반 하도)';
             }
             if (stdPrimer.role === '하도') stdPrimer.role = '일반하도';
+          }
+          const liningMat = merged.tabs.epoxy.materials.find(m => m.id === 'e_middle');
+          if (liningMat) {
+            if (!liningMat.name || liningMat.name.includes('중도') || liningMat.name.includes('레진몰탈') || liningMat.name.includes('크린폭시 상도 라이닝')) {
+              liningMat.name = '에폭시 라이닝';
+            }
+            liningMat.role = '라이닝';
           }
           const hasUniPrimer = merged.tabs.epoxy.materials.some(m => m.id === 'e_uni_primer');
           if (!hasUniPrimer) {
@@ -5447,6 +5454,20 @@
         merged.customerQuote.contract = Object.assign({}, defCt, snap.customerQuote.contract || {});
       }
 
+      if (merged.tabs && merged.tabs.epoxy && Array.isArray(merged.tabs.epoxy.materials)) {
+        const lMat = merged.tabs.epoxy.materials.find(m => m.id === 'e_middle');
+        if (lMat) {
+          if (!lMat.name || lMat.name.includes('중도') || lMat.name.includes('레진몰탈') || lMat.name.includes('크린폭시 상도 라이닝')) {
+            lMat.name = '에폭시 라이닝';
+          }
+          lMat.role = '라이닝';
+        }
+        const hasUni = merged.tabs.epoxy.materials.some(m => m.id === 'e_uni_primer');
+        if (!hasUni) {
+          const facUni = fac.tabs.epoxy.materials.find(m => m.id === 'e_uni_primer');
+          if (facUni) merged.tabs.epoxy.materials.splice(1, 0, deepClone(facUni));
+        }
+      }
       appState = merged;
       currentLoadedQuoteSlot = slotIdx;
 
@@ -5745,6 +5766,7 @@
         '하도': 'bg-amber-100 text-amber-800 border-amber-200',
         '일반하도': 'bg-teal-100 text-teal-900 border-teal-300',
         '만능하도': 'bg-amber-100 text-amber-900 border-amber-300',
+        '라이닝': 'bg-blue-100 text-blue-900 border-blue-300',
         '중도': 'bg-emerald-100 text-emerald-800 border-emerald-200',
         '상도': 'bg-sky-100 text-sky-800 border-sky-200',
         '중도+상도': 'bg-cyan-100 text-cyan-900 border-cyan-300',
@@ -5769,7 +5791,7 @@
         : (appState.activeTab === 'epoxy' ? '🔵 1. 에폭시 바닥시공 자재 묶음' : '🟣 1. 탄성코트 3종 자재 묶음');
       const mainSubtitle = appState.activeTab === 'urethane'
         ? '하도 · 중도 · 상도 · 탄성방수제 1액형 · 차열상도 · 신나'
-        : (appState.activeTab === 'epoxy' ? '일반 프라이머 · 만능 프라이머 · 라이닝(중도) · 코팅(상도) · 전용 신나' : '세라믹탄성 · 월드클래스(실리카) · 제로스탑');
+        : (appState.activeTab === 'epoxy' ? '일반 프라이머 · 만능 프라이머 · 에폭시 라이닝 · 에폭시 상도 코팅 · 전용 신나' : '세라믹탄성 · 월드클래스(실리카) · 제로스탑');
       const mainBorderClass = appState.activeTab === 'urethane'
         ? 'border-emerald-300 bg-emerald-50/30'
         : (appState.activeTab === 'epoxy' ? 'border-blue-300 bg-blue-50/30' : 'border-purple-300 bg-purple-50/30');
@@ -5891,7 +5913,7 @@
               </div>
               <div class="flex flex-wrap items-center justify-between gap-1.5 pt-1.5 border-t border-slate-100">
                 <div class="flex flex-wrap items-center gap-1">
-                  <span class="text-[10px] font-extrabold text-blue-900 mr-0.5">② 상·중도 방식:</span>
+                  <span class="text-[10px] font-extrabold text-blue-900 mr-0.5">② 에폭시 코팅/라이닝:</span>
                   <button type="button" data-grp-epoxy-mode="coating" class="grp-epoxy-mode-btn px-2.5 py-1 rounded-lg text-[11px] font-extrabold transition ${sMode === 'coating' ? 'bg-blue-700 text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-blue-50 border border-slate-200'}">
                     💧 코팅 (20평/말)
                   </button>
@@ -6879,9 +6901,7 @@
         const qty = calculateMaterialQty(mat, tab, appState.roundingMode);
         const sub = Math.round(qty * (Number(mat.unitPrice) || 0));
         const uWord = getMatUnitWord(mat);
-        const specDesc = mat.calcMode === 'manual'
-          ? `${mat.specUnit || '1' + uWord} · 수량지정`
-          : `${mat.specUnit || '1' + uWord} · ${mat.coveragePerMal}평/${uWord}`;
+        const specDesc = mat.specUnit || `1${uWord} 기준`;
         itemizedRows.push({
           name: mat.name,
           spec: specDesc,
@@ -7185,7 +7205,7 @@
       const paintItemizedRows = [
         {
           name: `정품 수성/도장 페인트 (${coats}회 도장)`,
-          spec: `18kg(말) 기준 · 소요량 약 ${totalLiters.toFixed(1)}L`,
+          spec: '18kg(1말) 기준',
           qtyText: `${cans18kgOnly}통(말)`,
           numericQty: cans18kgOnly,
           unitPrice: Number(p.price18kg) || 0,
@@ -7196,7 +7216,7 @@
       if (p.includePutty && puttyCans25kg > 0) {
         paintItemizedRows.push({
           name: '올퍼티 핸디코트 (바탕 평탄화)',
-          spec: `25kg 기준 · 약 ${puttyKg.toFixed(1)}kg 소요`,
+          spec: '25kg(1통) 기준',
           qtyText: `${puttyCans25kg}통`,
           numericQty: puttyCans25kg,
           unitPrice: Number(p.pricePutty25kg) || 0,
@@ -7779,7 +7799,7 @@
         elasticSpecTableSection.classList.add('hidden');
         guideBoxTitle.innerHTML = '<span>💡 에폭시 시공 산출 안내</span>';
         guideBoxList.innerHTML = `
-          <li><strong>에폭시 하도/중도/상도/신나:</strong> 현장 사양(코팅 또는 라이닝)에 맞춰 단가와 평수를 수정하세요.</li>
+          <li><strong>에폭시 프라이머/라이닝/코팅상도/신나:</strong> 현장 사양(코팅 또는 에폭시 라이닝)에 맞춰 단가와 평수를 수정하세요.</li>
           <li><strong>초기값 고정:</strong> 원하는 단가·신나 규격(15L/40L)으로 맞춘 뒤 <strong>[💾 현재 설정을 초기값으로 저장]</strong>을 누르세요.</li>
         `;
       } else {
@@ -9668,7 +9688,7 @@
         ctx.font = `700 12.5px ${fontStack}`;
         ctx.textAlign = 'left';
         ctx.fillText('품명 및 시공 공정', INNER_X + 16, hMidY);
-        ctx.fillText('규격 / 산출기준', INNER_X + c1W + 12, hMidY);
+        ctx.fillText('규격 / 단위', INNER_X + c1W + 12, hMidY);
         ctx.textAlign = 'center';
         ctx.fillText('수량', INNER_X + c1W + c2W + c3W / 2, hMidY);
         ctx.textAlign = 'right';
@@ -10949,7 +10969,8 @@
             showToast('💧 크린폭시 코팅 시공 기준(하도 20평/말 · 코팅상도 20평/말)이 적용되었습니다.');
           } else if (mode === 'lining_2mm') {
             if (middle) {
-              middle.name = '크린폭시 상도 라이닝 2mm';
+              middle.name = '에폭시 라이닝';
+              middle.role = '라이닝';
               middle.specUnit = '24kg(1말)';
               middle.coveragePerMal = 5;
               middle.calcMode = 'coverage';
@@ -10957,10 +10978,11 @@
             }
             if (top) top.included = false;
             if (badge) badge.textContent = '현재: 에폭시 라이닝 2mm 기준 (24kg · 5평/말)';
-            showToast('🛡️ 크린폭시 라이닝 2mm 기준(24kg 1말당 5평 시공)이 적용되었습니다.');
+            showToast('🛡️ 에폭시 라이닝 2mm 기준(24kg 1말당 5평 시공)이 적용되었습니다.');
           } else if (mode === 'lining_3mm') {
             if (middle) {
-              middle.name = '크린폭시 상도 라이닝 3mm';
+              middle.name = '에폭시 라이닝';
+              middle.role = '라이닝';
               middle.specUnit = '24kg(1말)';
               middle.coveragePerMal = 3;
               middle.calcMode = 'coverage';
@@ -10968,7 +10990,7 @@
             }
             if (top) top.included = false;
             if (badge) badge.textContent = '현재: 에폭시 라이닝 3mm 기준 (24kg · 3평/말)';
-            showToast('💎 크린폭시 라이닝 3mm 기준(24kg 1말당 3평 시공)이 적용되었습니다.');
+            showToast('💎 에폭시 라이닝 3mm 기준(24kg 1말당 3평 시공)이 적용되었습니다.');
           }
 
           document.querySelectorAll('.epoxy-mode-btn').forEach(b => {
